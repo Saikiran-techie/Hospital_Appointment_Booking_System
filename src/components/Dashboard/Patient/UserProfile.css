@@ -1,0 +1,254 @@
+/* Profile Container */
+.profile-container {
+    min-height: 100vh;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background: #f7fafd; */
+}
+
+/* Card Styling */
+.profile-card {
+    background: #fff;
+    padding: 35px 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    width: 1200px;
+    max-width: 95%;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+/* Title */
+.profile-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 700;
+    font-size: 28px;
+}
+
+/* Image Section */
+.profile-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.profile-photo {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #3498db;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.profile-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+}
+
+.choose-file-input {
+    margin-top: 10px;
+}
+
+.upload-btn {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.upload-btn:hover {
+    background-color: #2980b9;
+    opacity: 0.95;
+}
+
+/* Form Styling */
+.form-columns {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.column {
+    flex: 1;
+    min-width: 220px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+}
+
+.form-group input:disabled {
+    background: #f5f5f5;
+    color: #888;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.success {
+    color: green;
+    font-size: 14px;
+    text-align: center;
+    margin-top: 12px;
+}
+
+/* Save Button */
+.save-btn {
+    width: 50%;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
+}
+
+.save-btn:hover {
+    background: #2980b9;
+    transform: translateY(-1px);
+}
+
+/* .save-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 30px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
+.save-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #fff;
+    border-top: 3px solid #3498db;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive: Mobile Adjustments */
+@media (max-width:360px) {
+
+    .profile-container {
+        padding: 0px;
+        margin-left: 0;
+    }
+    
+    .profile-card {
+        width: 400px;
+        padding: 10px;
+    }
+
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .form-columns {
+        flex-direction: column;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+    }
+
+    .save-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-columns {
+        flex-direction: column;
+    }
+
+    .profile-card {
+        padding: 25px 20px;
+    }
+
+    .profile-photo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 14px;
+    }
+}

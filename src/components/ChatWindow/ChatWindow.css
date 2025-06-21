@@ -1,0 +1,158 @@
+/* ChatWindow.css */
+
+.chat-window {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 450px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+}
+
+.chat-window.minimized {
+    height: auto;
+    max-height: none;
+    width: 300px;
+}
+
+.chat-header {
+    background: #0d6efd;
+    color: #fff;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header .controls {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-header .controls button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+.message {
+    margin-bottom: 12px;
+    max-width: 80%;
+}
+
+.message.sent {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.message.received {
+    align-self: flex-start;
+    text-align: left;
+}
+
+.message .meta {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.message .text {
+    background: #e1f5fe;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.attach-icon {
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+}
+
+.attachment img {
+    max-width: 150px;
+    border-radius: 4px;
+    margin-top: 6px;
+}
+
+.attachment a {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #0073b1;
+    text-decoration: none;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+.attachment audio {
+    margin-top: 6px;
+    width: 100%;
+}
+
+.chat-input {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-top: 1px solid #ccc;
+}
+
+.chat-input input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    margin: 0 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.chat-input button {
+    background: #0d6efd;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Minimized state */
+.chat-window.minimized {
+    height: 50px;
+    overflow: hidden;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+    .chat-window {
+        width: 100%;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+    }
+
+    .chat-input input[type="text"] {
+        font-size: 13px;
+    }
+
+    .chat-header {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+}

@@ -1,0 +1,138 @@
+/* PaymentPage.css */
+
+.payment-container {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.payment-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+}
+
+.payment-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.payment-subtitle {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 24px;
+}
+
+.payment-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.payment-option {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+    transition: all 0.25s ease;
+    justify-content: center;
+}
+
+.payment-option:hover {
+    background: #f8f9fa;
+    cursor: pointer;
+}
+
+.selected-option {
+    border: 2px solid #28a745;
+    background: #e8f8ee;
+    color: #28a745;
+}
+
+.pay-now-btn {
+    width: 100%;
+    background-color: #28a745;
+    border: none;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 12px;
+    color: #fff;
+    transition: background 0.3s ease;
+}
+
+.pay-now-btn:hover {
+    background-color: #218838;
+}
+
+.error-message {
+    color: #d9534f;
+    font-size: 14px;
+    margin-top: -8px;
+    margin-bottom: 16px;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 16px;
+    padding: 0 8px;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+/* Card Form Fields */
+.form-control {
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+    .payment-container {
+        padding: 16px;
+        margin: 20px auto;
+    }
+
+    .payment-options {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .payment-option {
+        flex: 1 1 100%;
+    }
+
+    .payment-title {
+        font-size: 22px;
+    }
+
+    .payment-subtitle {
+        font-size: 14px;
+    }
+
+    .pay-now-btn {
+        font-size: 15px;
+    }
+}

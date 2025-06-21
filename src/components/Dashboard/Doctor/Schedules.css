@@ -1,0 +1,131 @@
+/* Page container */
+.schedules-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+/* Card styling */
+.card {
+    border-radius: 12px;
+    border: none;
+    overflow: hidden;
+}
+
+/* Header title */
+.card-body h4 {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Calendar header icons and titles */
+.fc-toolbar-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Calendar buttons */
+.fc-button {
+    background-color: #0f9b8e;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+}
+
+.fc-button:hover {
+    background-color: #50c9c3;
+}
+
+.fc-button-primary:not(:disabled):active,
+.fc-button-primary:not(:disabled).fc-button-active {
+    background-color: #0f9b8e;
+    border-color: #0f9b8e;
+}
+
+/* Calendar grid background */
+.fc {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+/* Event titles */
+.fc-event {
+    background-color: #50c9c3;
+    border: none;
+    padding: 4px 6px;
+    font-size: 13px;
+    color: white;
+    border-radius: 4px;
+}
+
+/* Calendar header button spacing */
+.fc-toolbar-chunk button {
+    margin-left: 6px;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Google icon size */
+.btn .fa-google {
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+/* Card spacing */
+.shadow-sm {
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body h4 {
+        font-size: 18px;
+    }
+
+    .fc-toolbar-title {
+        font-size: 16px;
+    }
+
+    .fc-button {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .btn {
+        font-size: 13px;
+        padding: 7px 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+
+    .fc-toolbar-title {
+        font-size: 15px;
+    }
+
+    .fc-button {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}

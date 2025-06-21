@@ -1,0 +1,32 @@
+
+.appointment-details {
+    padding: 2rem;
+}
+
+.badge {
+    font-size: 0.85rem;
+}
+
+/* AppointmentDetails.css */
+
+.report-card {
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.report-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.report-card button {
+    border: none;
+    padding: 6px 8px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge {
+    font-size: 0.85rem;
+}

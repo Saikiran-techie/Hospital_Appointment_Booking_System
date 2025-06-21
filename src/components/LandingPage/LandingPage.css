@@ -1,0 +1,379 @@
+
+.hero-section {
+    min-height: 90vh;
+    background: linear-gradient(to right, #f0f4ff, #e0f7ff);
+    /* background-image:url("../hospital-frontend/src/assets/HomeBackgroundImage.jpg"); */
+    padding: 4rem 0;
+}
+
+.text-primary {
+    color: #2563eb !important;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.hero-img {
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-section {
+  animation: fadeInUp 1s ease-in;
+}
+
+/* Animation Keyframes */
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Animation Classes */
+.slide-left {
+    animation: slideInLeft 1s ease forwards;
+}
+
+.slide-right {
+    animation: slideInRight 1s ease forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 767px) {
+    .hero-section {
+        padding: 2rem 0;
+        text-align: center;
+    }
+
+    .hero-section h1 {
+        font-size: 2.25rem;
+    }
+
+    .hero-section p {
+        font-size: 1.1rem;
+    }
+
+    .appointment-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .appointment-section p {
+        font-size: 1.05rem;
+    }
+
+    .hero-img {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+
+/* Our Services Section */
+.our-services-section h2 {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Feature Card Styling */
+.our-services-section .feature-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    background: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.our-services-section .feature-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Section Layout Adjustments */
+.our-services-section .card-body {
+    padding: 20px;
+}
+
+.our-services-section .g-4 {
+    margin-top: 0;
+}
+
+.our-services-section .row {
+    margin-bottom: 15px;
+}
+
+/* Doctor Section */
+.doctors-section h2 {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+/* Doctor Card Styling */
+.doctors-section .doctor-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    cursor: pointer;
+}
+
+.doctors-section .doctor-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.doctors-section .doctor-img {
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.available-dot {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 14px;
+    height: 14px;
+    background-color: #28a745;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* Section Layout Adjustments */
+.doctors-section .card-body {
+    padding: 20px;
+}
+
+.doctors-section .g-4 {
+    margin-top: 0;
+}
+
+.doctors-section .row {
+    margin-bottom: 20px;
+}
+
+
+/* About Doctors Section */
+.about-doctor-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.about-doctor-img {
+    width: 100%;
+    max-width: 420px;
+    height: 270px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+/* .card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1A237E;
+} */
+
+/* About Section */
+.about-section {
+    background-color: #f9fcff;
+}
+
+/* About Section Animations */
+@keyframes slideInLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.about-img {
+    width: 550px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    animation: slideInLeft 1s ease forwards;
+}
+
+.about-text {
+    animation: slideInRight 1s ease forwards;
+}
+
+/* Contact Section */
+.contact-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Animations */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Apply animations */
+.slide-left {
+    animation: slideInLeft 1s ease forwards;
+}
+
+.slide-right {
+    animation: slideInRight 1s ease forwards;
+}
+
+.animate-pop {
+    animation: popIn 0.8s ease forwards;
+}
+
+/* Optional: Add spacing */
+.contact-info p {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+/* Footer background gradient */
+.custom-footer {
+    background: linear-gradient(135deg, #0d6efd, #003366);
+    /* border-top-left-radius: 20px;
+    border-top-right-radius: 20px; */
+}
+
+/* Footer text */
+.custom-footer p,
+.custom-footer h5 {
+    color: #f8f9fa;
+}
+
+/* Quick links list */
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: #f8f9fa;
+    text-decoration: none;
+    font-size: 1.05rem;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #ffd966;
+    text-decoration: underline; 
+}
+
+/* Social media icons */
+.social-link {
+    color: #f8f9fa;
+    font-size: 1.4rem;
+    transition: color 0.3s ease, transform 0.25s ease;
+}
+
+.social-link:hover {
+    color: #ffd966;
+    transform: scale(1.2); }
+
+/* Contact text */
+.footer-contact {
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+/* Copyright text */
+.copyright-text {
+    font-size: 1.05rem;
+    color: #f8f9fa;
+}

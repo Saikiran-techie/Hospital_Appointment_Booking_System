@@ -1,0 +1,43 @@
+
+/* Appointment Wrapper */
+.appointment-wrapper {
+    /* background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); */
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Appointment Card */
+.appointment-card {
+    background: white;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 100%;
+}
+
+/* Form Controls */
+.appointment-card .form-control,
+.appointment-card .form-select {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 10px 15px;
+}
+
+/* Section Titles */
+.appointment-card h5 {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Button */
+.appointment-card button {
+    border-radius: 12px;
+    padding: 10px;
+    font-weight: bold;
+}
+
+.text-danger {
+    font-size: 0.85rem;
+    margin-top: 2px;
+}

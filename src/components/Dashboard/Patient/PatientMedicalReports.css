@@ -1,0 +1,117 @@
+/* Container */
+.medical-reports-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Top controls (search, buttons) */
+.medical-reports-container .top-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Search bar input */
+.medical-reports-container .search-bar {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 240px;
+}
+
+/* Empty state styling */
+.medical-reports-container .empty-state {
+    padding: 50px 20px;
+    text-align: center;
+    color: #777;
+}
+
+.medical-reports-container .empty-state h5 {
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+/* Pagination controls */
+.medical-reports-container .pagination {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.medical-reports-container .pagination button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.medical-reports-container .pagination button:hover {
+    background-color: #e7e7e7;
+}
+
+.medical-reports-container .pagination button.active-page {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+/* Card headers for patient names */
+.medical-reports-container .card-header {
+    background-color: #f8f8f8;
+    font-weight: 600;
+    font-size: 17px;
+}
+
+/* Card body layout */
+.medical-reports-container .card-body {
+    border-top: 1px solid #eee;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Card body icon */
+.medical-reports-container .card-body .report-icon {
+    flex-shrink: 0;
+}
+
+/* Report file name and uploaded date */
+.medical-reports-container .card-body .flex-grow-1 {
+    flex-grow: 1;
+}
+
+/* Action buttons inside card */
+.medical-reports-container .card-body .btn {
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+.medical-reports-container .card-body .btn+.btn {
+    margin-left: 10px;
+}
+
+/* Upload modal select and file input */
+.medical-reports-container .modal-body select {
+    margin-bottom: 15px;
+}
+
+.medical-reports-container .modal-body input[type="file"] {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Uploading text */
+.medical-reports-container .uploading-text {
+    margin-top: 10px;
+    color: #333;
+    font-size: 14px;
+}

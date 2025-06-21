@@ -1,3 +1,40 @@
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: #f8f9fa;
+  background-color: #1e1e2f;
+}
+
+.nav-link {
+  cursor: pointer;
+  color: #f8f9fa;
+}
+
+.nav-link:hover {
+  color: #00aced;
+  text-decoration: none;
+}
+
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 100px 50px 50px;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +72,42 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.footer-section {
+  background: #0d0d1a;
+  padding: 40px;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.footer-content h5 {
+  margin-bottom: 10px;
+  color: #00aced;
+}
+
+.footer-content a {
+  display: block;
+  color: #f8f9fa;
+  margin: 5px 0;
+  text-decoration: none;
+}
+
+.footer-content a:hover {
+  color: #00aced;
+}
+
+.social-icons a {
+  color: #f8f9fa;
+  font-size: 20px;
+  margin: 0 10px;
+}
+
+.social-icons a:hover {
+  color: #00aced;
 }

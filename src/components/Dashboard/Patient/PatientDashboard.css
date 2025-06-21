@@ -1,0 +1,125 @@
+/* Dashboard Layout */
+.dashboard-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Main Content Area */
+.dashboard-content {
+    background-color: #F1F2F6;
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    margin-left: 280px;
+    transition: margin-left 0.3s ease;
+}
+
+/* Adjust margin when sidebar is collapsed or on small screens */
+@media (max-width: 992px) {
+    .dashboard-content {
+        margin-left: 60px; /* Adjusted for smaller screens */
+        padding: 20px;
+    }
+}
+
+/* Mobile adjustments */
+/* @media (max-width: 500px) {
+    .dashboard-content {
+        margin-left: 60px;
+        padding: 15px;
+    }
+} */
+
+/* Dashboard Card */
+.dashboard-card {
+    background-color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Appointment Card */
+.appointment-card {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 15px;
+    transition: transform 0.2s;
+}
+
+.appointment-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Buttons */
+.upload-btn {
+    /* background-color: #0f9b8e; */
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    /* color: white; */
+    transition: all 0.3s ease;
+}
+
+.upload-btn:hover {
+    background-color: #50c9c3;
+    transform: translateY(-1px);
+}
+
+/* Report List */
+.report-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+.report-list-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: rgba(247, 249, 251, 0.85);
+    transition: all 0.2s ease;
+}
+
+.report-list-item:hover {
+    background-color: #f1f1f1;
+    transform: translateX(5px);
+}
+
+/* Hamburger Toggle Button */
+.sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #fff;
+    padding: 8px 10px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    cursor: pointer;
+    display: none;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: #777;
+    margin: 20px 0;
+}
+
+.empty-state .icon {
+    color:dodgerblue;
+    margin-bottom: 10px;
+}

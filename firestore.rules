@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to manage their profile
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Patient-specific access
+    match /patients/{userId} {
+      allow read: if request.auth != null && 
+        (request.auth.uid == userId || isDoctor(request.auth.token));
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Doctor-specific access  
+    match /doctors/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Admin-specific access
+    match /admins/{userId} {
+      allow read, write: if isAdmin(request.auth.token);
+    }
+
+    // Helper functions
+    function isDoctor(user) {
+      return 'doctor' in user.roles || 'admin' in user.roles;
+    }
+    
+    function isAdmin(user) {
+      return 'admin' in user.roles;
+    }
+  }
+}

@@ -1,0 +1,148 @@
+.prescription-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-size: 32px;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+}
+
+.search-sort-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.search-sort-container input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.search-sort-container button {
+    background-color: #0d6efd;
+    color: white;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.search-sort-container button:hover {
+    background-color: #084298;
+}
+
+.appointment-card {
+    background: #fefefe;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.06);
+}
+
+.appointment-card h3 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.patient-code {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+}
+
+.appointment-card hr {
+    border-top: 1px solid #ddd;
+    margin: 12px 0 20px 0;
+}
+
+.appointment-card p {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #555;
+}
+
+.prescription-list {
+    margin-top: 20px;
+    display: grid;
+    gap: 18px;
+}
+
+.prescription-card {
+    margin-top: 1rem;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 14px;
+    padding: 1rem;
+}
+
+.prescription-card p {
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+.file-section {
+    margin-top: 14px;
+}
+
+.file-section h5 {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.download-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0d6efd;
+    font-weight: 500;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.download-link:hover {
+    text-decoration: underline;
+}
+
+.prescription-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    margin-top: 10px;
+}
+
+.empty-state {
+    text-align: center;
+    color: #777;
+}
+
+@media (max-width: 768px) {
+    .search-sort-container {
+        flex-direction: column;
+    }
+
+    .search-sort-container button {
+        width: 100%;
+    }
+
+    .appointment-card h3 {
+        font-size: 20px;
+    }
+}

@@ -1,0 +1,160 @@
+/* Gradient Navbar and Height*/
+.custom-navbar {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #2563eb 0%, #38bdf8 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Brand Name Font */
+.brand-name {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.brand-name h4 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+/* Nav Links */
+.custom-navbar .nav-link,
+.custom-offcanvas .nav-link {
+    cursor: pointer;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #e0f2fe;
+    transition: color 0.3s ease;
+}
+
+/* Active nav link */
+.active-nav-link {
+    color: #ffd166 !important;
+    font-weight: 700;
+}
+
+/* Hover on Navbar Links */
+.custom-navbar .nav-link:hover {
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+}
+
+/* Logo Image */
+.logo-img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Toggler Button (Hamburger Icon) */
+.custom-toggler {
+    border: none;
+    padding: 0.3rem;
+}
+
+/* Offcanvas Menu */
+.custom-offcanvas {
+    background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+    color: white;
+}
+
+/* Offcanvas Header */
+.offcanvas-header {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Offcanvas Links */
+.custom-offcanvas .nav-link {
+    color: #f0f9ff;
+    font-size: 1.4rem;
+    margin: 1.2rem 0;
+    transition: color 0.3s ease;
+}
+
+.custom-offcanvas .nav-link:hover {
+    color: #ffd166;
+}
+
+/* Close button inside Offcanvas */
+.close-btn {
+    color: white;
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+/* Signup Button */
+.custom-signup-btn {
+    background: linear-gradient(90deg, #06b6d4, #3b82f6);
+    font-size: medium;
+    border: none;
+    padding: 8px 22px;
+    border-radius: 25px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.custom-signup-btn:hover {
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
+    opacity: 0.95;
+}
+
+/* Login Button */
+.custom-login-btn {
+    background: white;
+    border: 2px solid #3b82f6;
+    padding: 8px 22px;
+    border-radius: 25px;
+    color: #2563eb;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.custom-login-btn:hover {
+    background: #e0f2fe;
+    border-color: #3b82f6;
+    color: #2563eb;
+    opacity: 0.95;
+}
+
+/* Offcanvas Body Padding */
+.custom-offcanvas .offcanvas-body {
+    padding-top: 2rem;
+}
+
+/* Smooth hover transitions for buttons and links */
+.custom-navbar .nav-link,
+.custom-offcanvas .nav-link,
+.custom-signup-btn,
+.custom-login-btn {
+    transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .custom-navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .brand-name {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .logo-img {
+        height: 70px;
+    }
+
+    .custom-offcanvas .nav-link {
+        font-size: 1.2rem;
+    }
+}

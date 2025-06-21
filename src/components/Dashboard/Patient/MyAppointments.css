@@ -1,0 +1,257 @@
+/* Section Heading */
+.section-heading {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+}
+
+/* Container */
+.appointments-container {
+    padding: 20px;
+}
+
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.summary-card {
+    padding: 20px;
+    border-radius: 12px;
+    background: #ffffff;
+    text-align: center;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s;
+}
+
+.summary-card h4 {
+    margin: 10px 0;
+    color: #333;
+}
+
+.summary-card p {
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Icon colors */
+.summary-card.scheduled svg {
+    color: #007bff;
+}
+
+.summary-card.completed svg {
+    color: #28a745;
+}
+
+.summary-card.cancelled svg {
+    color: #dc3545;
+}
+
+.summary-card.pending svg {
+    color: #f0ad4e;
+}
+
+/* Count text colors */
+.summary-card.scheduled p {
+    color: #007bff;
+}
+
+.summary-card.completed p {
+    color: #28a745;
+}
+
+.summary-card.cancelled p {
+    color: #dc3545;
+}
+
+.summary-card.pending p {
+    color: #f0ad4e;
+}
+
+/* Section Subheading */
+.appointments-section h4 {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    color: #333;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+/* Appointments List */
+.appointments-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+/* Individual Appointment Card */
+.appointments-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 300px;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: background 0.3s, transform 0.3s;
+}
+
+.appointments-card:hover {
+    transform: translateY(-3px);
+}
+
+.appointment-info {
+    flex-grow: 1;
+}
+
+.appointment-info h4,
+.appointment-info h6 {
+    margin: 0 0 6px 0;
+}
+
+.appointment-info p {
+    margin: 4px 0;
+    font-size: 14px;
+}
+
+/* Appointment Status Text */
+.status {
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.status.scheduled {
+    color: #2575fc;
+}
+
+.status.completed {
+    color: #38ef7d;
+}
+
+.status.cancelled {
+    color: #e74c3c;
+}
+
+/* Appointment Action Buttons */
+.appointment-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.appointment-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 6px;
+    border-radius: 6px;
+    transition: color 0.3s, transform 0.2s, background 0.3s;
+}
+
+.appointment-actions button:hover {
+    transform: scale(1.1);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Individual Action Colors */
+.view-btn {
+    color: #2575fc;
+}
+
+.reschedule-btn {
+    color: #f39c12;
+}
+
+.upload-btn {
+    color: #1d35ef;
+}
+
+.cancel-btn,
+.delete-btn {
+    color: #e74c3c;
+}
+
+/* Medical Report Preview */
+.medical-report-preview {
+    margin-bottom: 1rem;
+}
+
+.medical-report-preview img,
+.medical-report-preview iframe {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+}
+
+/* Empty State Message */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    margin: auto;
+}
+
+.empty-state .icon {
+    margin-bottom: 12px;
+    font-size: 42px;
+}
+
+.empty-state .icon.upcoming {
+    color: #007bff;
+}
+
+.empty-state .icon.completed {
+    color: #28a745;
+}
+
+.empty-state .icon.cancelled {
+    color: #dc3545;
+}
+
+.empty-state h5 {
+    margin: 10px 0 5px;
+    font-weight: 600;
+    color: #333;
+}
+
+.empty-state p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Responsive Layouts */
+@media (max-width: 992px) {
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .appointment-actions {
+        justify-content: flex-end;
+    }
+}
