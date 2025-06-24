@@ -9,7 +9,8 @@ import {
     signInWithPopup,
     setPersistence,
     browserLocalPersistence,
-    browserSessionPersistence
+    browserSessionPersistence,
+    updateProfile,
 } from 'firebase/auth';
 
 import {
@@ -32,8 +33,14 @@ export const registerWithEmailPassword = async (name, email, password, role) => 
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        // 👈 Add this block to set displayName in Firebase Auth
+        await updateProfile(user, {
+            displayName: name
+        });
+
+        // Save to Firestore
         await saveUserData(user.uid, name, email, validRole, 'email-password');
-        await saveRoleSpecificData(user.uid, name, email, validRole);
+        await saveRoleSpecificData(user.uid, name, email, role);
 
         return userCredential;
     } catch (error) {

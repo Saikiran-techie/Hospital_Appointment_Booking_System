@@ -209,7 +209,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                             <div className="column">
                                 <div className="form-group">
                                     <label htmlFor='text'>Full Name</label>
-                                    <input type="text" value={doctorProfile?.name || doctorData.displayName || ''} disabled />
+                                            <input type="text" value={formData.fullName} disabled />
                                 </div>
 
                                 <div className="form-group">
