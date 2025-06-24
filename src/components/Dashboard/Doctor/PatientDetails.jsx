@@ -8,6 +8,7 @@ import { Button, Card, Row, Col, Spinner } from 'react-bootstrap';
 import '../Patient/AppointmentDetails.css';
 import { useAuth } from '../../../context/AuthContext';
 import { useParams, useOutletContext } from 'react-router-dom';
+import ChatWindow from '../../ChatWindow/ChatWindow';
 
 function PatientDetails() {
     const { appointmentId } = useParams();
@@ -20,6 +21,7 @@ function PatientDetails() {
     const [updatingStatus, setUpdatingStatus] = useState(false);
     const [prescriptionText, setPrescriptionText] = useState('');
     const [prescriptionFile, setPrescriptionFile] = useState(null);
+    const [showChat, setShowChat] = useState(false);
 
     const { currentUser } = useAuth();
     const { openChatWindow } = useOutletContext();
@@ -200,7 +202,7 @@ function PatientDetails() {
                 <Button
                     variant="outline-success"
                     className="rounded-pill shadow-sm px-3 me-2"
-                    onClick={openChat}
+                    onClick={() => setShowChat(true)}
                 >
                     💬 Real-time Chat
                 </Button>
@@ -452,6 +454,15 @@ function PatientDetails() {
                 </Col>
 
             </Row>
+
+            {showChat && (
+            <ChatWindow
+                appointmentId={appointmentId}
+                otherPartyLabel={appointment.fullName}
+                otherPartyName={appointment.fullName}
+                onClose={() => setShowChat(false)}
+            />
+            )}
 
         </div>
     );

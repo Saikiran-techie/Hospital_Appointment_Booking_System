@@ -1,0 +1,21 @@
+
+[
+    {
+        "origin": [
+            "http://localhost:3000",
+            "https://hospital-appointment-booking-system-umber.vercel.app/"
+        ],
+        "method": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE"
+        ],
+        "maxAgeSeconds": 3600,
+        "responseHeader": [
+            "Content-Type",
+            "Authorization",
+            "x-goog-meta-custom"
+        ]
+    }
+]

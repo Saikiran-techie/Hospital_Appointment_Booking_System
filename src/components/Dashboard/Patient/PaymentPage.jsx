@@ -60,10 +60,10 @@ function PaymentPage() {
 
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:3001/api/create-razorpay-order', {
+            const res = await fetch('https://hospital-appointment-booking-system-fz8f.onrender.com/api/create-razorpay-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: 50000, currency: 'INR', receipt: appointmentId }),
+                body: JSON.stringify({ amount: 20000, currency: 'INR', receipt: appointmentId }),
             });
             const orderData = await res.json();
             if (!orderData.id) throw new Error('Order creation failed.');
@@ -101,9 +101,6 @@ function PaymentPage() {
         }
     };
 
-    // Clear session storage to remove any previous appointment data
-    sessionStorage.removeItem('appointmentFormData');
-
     // Function to save appointment details after successful payment
     const saveAppointment = async paymentId => {
         try {
@@ -115,9 +112,11 @@ function PaymentPage() {
                 status: 'Confirmed',
                 paymentTimestamp: new Date()
             });
-            Swal.fire({ icon: 'success', title: 'Appointment Confirmed' }).then(() =>
-                navigate('/patient/dashboard')
-            );
+            Swal.fire({ icon: 'success', title: 'Appointment Confirmed' }).then(() => {
+                // ✅ On successful payment — remove saved form data
+                sessionStorage.removeItem('appointmentFormData');
+                navigate('/patient/dashboard');
+            });
         } catch (e) {
             Swal.fire('Error', 'Unable to confirm appointment', 'error');
         } finally {
@@ -141,17 +140,27 @@ function PaymentPage() {
                     <p className="text-muted text-center mb-4">Please review your appointment details before proceeding with the payment.</p>
                     <hr />
                     <p><strong>Patient:</strong> {appointment.fullName} ({appointment.patientCode})</p>
-                    {/* <p><strong>Appointment ID:</strong> {appointmentId}</p> */}
                     <p><strong>Doctor:</strong> Dr. {appointment.doctor}</p>
                     <p><strong>Specialization:</strong> {appointment.specialization}</p>
                     <p><strong>Date & Time:</strong> {appointment.appointmentDate} at {appointment.appointmentTime}</p>
                     <p><strong>Consultation Type:</strong> {appointment.consultationType}</p>
-                    <p><strong>Consultation Fee:</strong> ₹500</p>
-                    {/* <p><strong>Fee:</strong> ₹500</p> */}
+                    <p><strong>Consultation Fee:</strong> ₹200</p>
 
-                    <Button onClick={handlePayNow} className="w-100 mt-3" variant="primary">
-                        Pay ₹500
-                    </Button>
+                    <div className="d-flex gap-3 mt-4">
+                        {/* ✅ Back Button */}
+                        <Button
+                            variant="secondary"
+                            className="w-50"
+                            onClick={() => navigate('/patient/bookAppointment')}
+                        >
+                            ← Back to Booking
+                        </Button>
+
+                        {/* ✅ Pay Now Button */}
+                        <Button onClick={handlePayNow} className="w-50" variant="primary">
+                            Pay ₹200
+                        </Button>
+                    </div>
                 </Card.Body>
             </Card>
         </div>

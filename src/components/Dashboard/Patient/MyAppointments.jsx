@@ -9,12 +9,18 @@ import Swal from 'sweetalert2';
 import { doc, updateDoc, deleteDoc, addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db, storage } from '../../../firebase/firebaseConfig'; // adjust your firebase import path
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
+
 // import { useOutletContext } from 'react-router-dom';
 // import { getDocs, collection, query, where, updateDoc, doc } from 'firebase/firestore';
 
 function MyAppointments() {
     // ✅ get data from PatientDashboard context
-    const { appointments = [], loadingAppointments, currentUser, onViewAppointment } = useOutletContext();
+    const { appointments = [], loadingAppointments, currentUser: contextUser, onViewAppointment } = useOutletContext();
+    const auth = getAuth();
+    const fallbackUser = auth.currentUser;
+    const currentUser = contextUser || fallbackUser;
+
 
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [rescheduleData, setRescheduleData] = useState({ date: '', time: '', consultationType: '' });
@@ -57,6 +63,13 @@ function MyAppointments() {
             Swal.fire('Error', 'User not authenticated.', 'error');
             return;
         }
+
+        // if (!currentUser) {
+        //     Swal.fire("Session Expired", "Please login again", "error");
+        //     navigate("/login");
+        //     return;
+        // }
+          
 
         const cleanFileName = sanitizeFileName(uploadFile.name);
         const filePath = `medicalReports/${selectedAppointment.id}/${cleanFileName}`;
@@ -284,7 +297,7 @@ function MyAppointments() {
                                         </OverlayTrigger>
 
                                         <OverlayTrigger placement="top" overlay={<Tooltip>Upload Report</Tooltip>}>
-                                            <button className="upload-btn" onClick={() => {
+                                            <button id="upload-btn" onClick={() => {
                                                 setSelectedAppointment(app);
                                                 setShowUploadModal(true);
                                             }}>

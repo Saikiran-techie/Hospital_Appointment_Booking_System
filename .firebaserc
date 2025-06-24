@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "hospital-appointment-boo-fb867"
-  }
+    "default": "hospital-appointment-boo-fb867",
+    "staging": "hospital-appointment-boo-fb867"
+  },
+  "targets": {},
+  "etags": {}
 }

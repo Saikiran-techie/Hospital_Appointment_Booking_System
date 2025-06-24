@@ -7,7 +7,6 @@ import { getUserDetails } from '../../../services/userService';
 
 import PatientSidebar from './PatientSidebar';
 import PatientTopNavbar from './PatientTopNavbar';
-import ChatWindow from '../../ChatWindow/ChatWindow';
 
 import './PatientDashboard.css';
 
@@ -16,9 +15,6 @@ const PatientDashboardLayout = () => {
     const [appointments, setAppointments] = useState([]);
     const [loadingAppointments, setLoadingAppointments] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [showChat, setShowChat] = useState(false);
-    const [chatAppointmentData, setChatAppointmentData] = useState(null);
-    const [chatAppointmentId, setChatAppointmentId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -104,19 +100,9 @@ const PatientDashboardLayout = () => {
                         loadingAppointments,
                         userData, // ✅ fixed context key
                         onViewAppointment: handleViewAppointment,
-                        setShowChat,
-                        setChatAppointmentData,
-                        setChatAppointmentId
                     }} />
                 </div>
             </div>
-            {showChat && chatAppointmentData && chatAppointmentId && (
-                <ChatWindow
-                    appointmentId={chatAppointmentId}
-                    otherPartyLabel={chatAppointmentData.doctorName}
-                    onClose={() => setShowChat(false)}
-                />
-            )}
         </div>
     );
 };

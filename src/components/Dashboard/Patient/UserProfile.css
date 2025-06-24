@@ -143,6 +143,11 @@
 }
 
 /* Save Button */
+.form-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; }
+
 .save-btn {
     width: 50%;
     background: #3498db;

@@ -315,10 +315,14 @@ function PatientMedicalReports() {
                                     .map((appt) => (
                                         <option key={appt.id} value={appt.id}>
                                             {appt.fullName} ({appt.patientCode || 'No Code'}) -{' '}
-                                            {appt.scheduledDate?.seconds
+                                            {appt.appointmentDate
                                                 ? new Date(
-                                                    appt.scheduledDate.seconds * 1000
-                                                ).toLocaleString()
+                                                    appt.appointmentDate.seconds
+                                                        ? appt.appointmentDate.seconds * 1000
+                                                        : typeof appt.appointmentDate === 'string'
+                                                            ? new Date(appt.appointmentDate).getTime()
+                                                            : 0
+                                                ).toLocaleDateString()
                                                 : 'Date N/A'}
                                         </option>
                                     ))}

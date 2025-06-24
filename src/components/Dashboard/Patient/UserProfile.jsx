@@ -6,12 +6,7 @@ import { useAuth } from '../../../context/AuthContext';
 
 const UserProfile = ({ onProfilePhotoUpdate }) => {
     const { currentUser } = useAuth();
-    // const currentUser = currentUser ? { ...currentUser, uid: currentUser.uid } : null;
-    // if (!currentUser) {
-    //     return <div className="profile-container">Loading...</div>;
-    // }
 
-    // Initialize form data state
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -133,7 +128,6 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
                 }
 
                 await saveUserDetails(currentUser.uid, formData);
-
                 swal("Success!", "Profile updated successfully!", "success");
                 setSelectedImage(null);
                 setLoading(false);
@@ -223,9 +217,12 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
                         </div>
                     </div>
 
-                    <button type="submit" className="save-btn" disabled={loading}>
-                        {loading ? 'Saving...' : 'Save'}
-                    </button>
+                    <div className="form-footer">
+                        <button type="submit" className="save-btn" disabled={loading}>
+                            {loading ? 'Saving...' : 'Save'}
+                        </button>
+                    </div>
+
                 </form>
             </div>
         </div>

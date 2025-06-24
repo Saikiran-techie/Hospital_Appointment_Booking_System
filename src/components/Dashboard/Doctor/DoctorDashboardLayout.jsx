@@ -8,7 +8,7 @@ import { getDoctorProfile } from '../../../services/doctorService';
 
 import DoctorTopNavbar from './DoctorTopNavbar';
 import DoctorSidebar from './DoctorSidebar';
-import ChatWindow from '../../ChatWindow/ChatWindow';
+// import ChatWindow from '../../ChatWindow/ChatWindow';
 
 import './DoctorDashboard.css';
 
@@ -23,9 +23,9 @@ const DoctorDashboardLayout = () => {
     const [completedAppointments, setCompletedAppointments] = useState([]);
     const [pendingAppointments, setPendingAppointments] = useState([]);
 
-    const [showChat, setShowChat] = useState(false);
-    const [chatAppointmentId, setChatAppointmentId] = useState(null);
-    const [chatAppointmentData, setChatAppointmentData] = useState(null);
+    // const [showChat, setShowChat] = useState(false);
+    // const [chatAppointmentId, setChatAppointmentId] = useState(null);
+    // const [chatAppointmentData, setChatAppointmentData] = useState(null);
 
     useEffect(() => {
         let unsubscribeAppointments = () => { };
@@ -68,17 +68,17 @@ const DoctorDashboardLayout = () => {
         signOut(auth).then(() => navigate('/login')).catch(error => console.error('Logout error:', error));
     };
 
-    const openChatWindow = (appointmentId, appointmentData) => {
-        setChatAppointmentId(appointmentId);
-        setChatAppointmentData(appointmentData);
-        setShowChat(true);
-    };
+    // const openChatWindow = (appointmentId, appointmentData) => {
+    //     setChatAppointmentId(appointmentId);
+    //     setChatAppointmentData(appointmentData);
+    //     setShowChat(true);
+    // };
 
-    const handleCloseChat = () => {
-        setShowChat(false);
-        setChatAppointmentId(null);
-        setChatAppointmentData(null);
-    };
+    // const handleCloseChat = () => {
+    //     setShowChat(false);
+    //     setChatAppointmentId(null);
+    //     setChatAppointmentData(null);
+    // };
 
     return (
         <div id="doctor-dashboard">
@@ -98,12 +98,12 @@ const DoctorDashboardLayout = () => {
                             scheduledAppointments,
                             completedAppointments,
                             pendingAppointments,
-                            openChatWindow,
+                            // openChatWindow,
                         }}
                     />
                 </div>
             </div>
-            {showChat && chatAppointmentData && chatAppointmentId && (
+            {/* {showChat && chatAppointmentData && chatAppointmentId && (
                 <ChatWindow
                     currentUser={userData}
                     appointmentData={chatAppointmentData}
@@ -111,7 +111,7 @@ const DoctorDashboardLayout = () => {
                     userRole="doctor"
                     onClose={handleCloseChat}
                 />
-            )}
+            )} */}
         </div>
     );
 };

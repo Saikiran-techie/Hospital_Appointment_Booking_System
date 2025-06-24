@@ -9,11 +9,11 @@ import { Spinner, Card, Row, Col, Button } from 'react-bootstrap';
 import { FaFileMedical, FaDownload, FaTrash, FaFilePrescription, FaFileImage, FaFilePdf } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import './AppointmentDetails.css';
+import ChatWindow from '../../ChatWindow/ChatWindow';
 
 function AppointmentDetails() {
   const { id: paramId } = useParams();
   const {
-    setShowChat,
     setChatAppointmentData,
     setChatAppointmentId
   } = useOutletContext();
@@ -27,6 +27,7 @@ function AppointmentDetails() {
   const [reportsLoading, setReportsLoading] = useState(true);
   const [prescriptionsLoading, setPrescriptionsLoading] = useState(true);
   const [deletingReportId, setDeletingReportId] = useState(null);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -201,7 +202,7 @@ function AppointmentDetails() {
         <Button
           variant="outline-success"
           className="rounded-pill shadow-sm px-3"
-          onClick={openChat}
+          onClick={() => setShowChat(true)}
         >
           💬 Real-time Chat
         </Button>
@@ -385,7 +386,19 @@ function AppointmentDetails() {
           </Col>
         )}
       </Row>
+
+      {showChat && (
+        <ChatWindow
+          appointmentId={appointmentData.id}
+          otherPartyLabel={`Dr. ${appointmentData.doctor}`}
+          otherPartyName={appointmentData.doctor}
+          onClose={() => setShowChat(false)}
+        />
+      )}
+
     </div>
+
+
   );
 }
 

@@ -44,7 +44,7 @@ const BookAppointment = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDoctors = async () => {
+        const fetchDoctorsAndFormData = async () => {
             try {
                 const querySnapshot = await getDocs(collection(db, 'doctors'));
                 const doctorList = querySnapshot.docs.map(doc => ({
@@ -52,20 +52,34 @@ const BookAppointment = () => {
                     ...doc.data(),
                 }));
                 setDoctors(doctorList);
+
+                // Load saved form data from sessionStorage
+                const savedFormData = sessionStorage.getItem('appointmentFormData');
+                if (savedFormData) {
+                    const parsedData = JSON.parse(savedFormData);
+                    setFormData(parsedData);
+
+                    // Set specialization for selected doctor (use the doctorList we just fetched)
+                    const selectedDoc = doctorList.find(d => d.id === parsedData.doctor);
+                    if (selectedDoc) {
+                        setSelectedSpecialization(selectedDoc.specialization);
+                    }
+                }
             } catch (error) {
-                console.error('Error fetching doctors:', error);
+                console.error('Error fetching doctors or loading saved form data:', error);
             }
         };
 
-        fetchDoctors();
+        fetchDoctorsAndFormData();
+    }, []);      
 
-        // Load saved form data from sessionStorage
-        const savedFormData = sessionStorage.getItem('appointmentFormData');
-        if (savedFormData) {
-            setFormData(JSON.parse(savedFormData));
+    useEffect(() => {
+        // if paymentSuccess param is passed in URL — clear sessionStorage
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('paymentSuccess') === 'true') {
+            sessionStorage.removeItem('appointmentFormData');
         }
-
-    }, []);
+    }, []);      
 
     const handleChange = (e) => {
         const { name, value } = e.target;

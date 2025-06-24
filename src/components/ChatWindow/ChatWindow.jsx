@@ -6,22 +6,55 @@ import {
     orderBy,
     onSnapshot,
     addDoc,
-    serverTimestamp
+    serverTimestamp,
+    doc,
+    getDoc
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../firebase/firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
-import { FaPaperPlane, FaPaperclip, FaFilePdf, FaWindowMinimize, FaWindowMaximize, FaTimes } from 'react-icons/fa';
+import {
+    FaPaperPlane,
+    FaPaperclip,
+    FaFilePdf,
+    FaWindowMinimize,
+    FaWindowMaximize,
+    FaTimes,
+    FaFileAlt,
+    FaFileImage
+} from 'react-icons/fa';
 import './ChatWindow.css';
 
-function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
+function ChatWindow({ appointmentId, otherPartyLabel, onClose, otherPartyName }) {
     const { currentUser } = useAuth();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [uploadFile, setUploadFile] = useState(null);
     const chatEndRef = useRef(null);
     const [isMinimized, setIsMinimized] = useState(false);
+    const [currentRole, setCurrentRole] = useState('User');
 
+    // Fetch current user role
+    useEffect(() => {
+        if (!currentUser) return;
+
+        const fetchUserRole = async () => {
+            try {
+                const userRef = doc(db, 'users', currentUser.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const { role } = userSnap.data();
+                    setCurrentRole(role || 'User');
+                }
+            } catch {
+                setCurrentRole('User');
+            }
+        };
+
+        fetchUserRole();
+    }, [currentUser]);
+
+    // Real-time message listener
     useEffect(() => {
         if (!appointmentId) return;
 
@@ -31,8 +64,8 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
             orderBy('createdAt')
         );
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const chats = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const unsubscribe = onSnapshot(q, snapshot => {
+            const chats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setMessages(chats);
             chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         });
@@ -46,8 +79,9 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
         let attachmentURL = '';
         let attachmentType = '';
 
+        // Handle file upload
         if (uploadFile) {
-            const fileRef = ref(storage, `chatAttachments/${appointmentId}/${uploadFile.name}`);
+            const fileRef = ref(storage, `chatAttachments/${appointmentId}/${Date.now()}_${uploadFile.name}`);
             await uploadBytes(fileRef, uploadFile);
             attachmentURL = await getDownloadURL(fileRef);
             attachmentType = uploadFile.type;
@@ -56,7 +90,7 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
         await addDoc(collection(db, 'chats'), {
             appointmentId,
             senderId: currentUser.uid,
-            senderRole: currentUser.role || 'unknown',
+            senderRole: currentRole,
             messageText: newMessage,
             attachmentURL,
             attachmentType,
@@ -70,7 +104,14 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
     const formatTime = (timestamp) => {
         if (!timestamp) return '';
         const date = timestamp.toDate();
-        return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
+    const getDisplayName = (msg) => {
+        if (msg.senderId === currentUser.uid) return 'You';
+        return currentRole === 'patient' ? `Dr. ${otherPartyName}` : otherPartyName;
     };
 
     return (
@@ -96,13 +137,13 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
             {!isMinimized && (
                 <>
                     <div className="chat-messages">
-                        {messages.map((msg) => (
+                        {messages.map(msg => (
                             <div
                                 key={msg.id}
                                 className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}
                             >
                                 <div className="meta">
-                                    <strong>{msg.senderRole}</strong> <span>{formatTime(msg.createdAt)}</span>
+                                    <strong>{getDisplayName(msg)}</strong> <span>{formatTime(msg.createdAt)}</span>
                                 </div>
 
                                 {msg.messageText && <div className="text">{msg.messageText}</div>}
@@ -112,13 +153,11 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
                                         {msg.attachmentType.startsWith('image/') && (
                                             <img src={msg.attachmentURL} alt="attachment" />
                                         )}
-
                                         {msg.attachmentType === 'application/pdf' && (
                                             <a href={msg.attachmentURL} target="_blank" rel="noreferrer">
                                                 <FaFilePdf /> View PDF
                                             </a>
                                         )}
-
                                         {msg.attachmentType.startsWith('audio/') && (
                                             <audio controls src={msg.attachmentURL}>
                                                 <track kind="captions" />
@@ -132,6 +171,27 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
                         <div ref={chatEndRef}></div>
                     </div>
 
+                    {uploadFile && (
+                        <div className="upload-preview-container">
+                            <div className="upload-preview d-flex align-items-center">
+                                <div className="file-info d-flex align-items-center gap-2">
+                                    {uploadFile.type.startsWith('image/') && <FaFileImage className="file-icon" />}
+                                    {uploadFile.type === 'application/pdf' && <FaFilePdf className="file-icon" />}
+                                    {!uploadFile.type.startsWith('image/') &&
+                                        uploadFile.type !== 'application/pdf' && <FaFileAlt className="file-icon" />}
+                                    <span className="file-name">{uploadFile.name}</span>
+                                </div>
+                                <button
+                                    className="remove-upload ms-auto"
+                                    onClick={() => setUploadFile(null)}
+                                    title="Remove"
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="chat-input">
                         <label htmlFor="file-upload">
                             <FaPaperclip className="attach-icon" />
@@ -142,6 +202,7 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
                             style={{ display: 'none' }}
                             onChange={(e) => setUploadFile(e.target.files[0])}
                         />
+
                         <input
                             type="text"
                             placeholder="Type message..."
@@ -151,6 +212,7 @@ function ChatWindow({ appointmentId, otherPartyLabel = 'Doctor', onClose }) {
                                 if (e.key === 'Enter') handleSendMessage();
                             }}
                         />
+
                         <button onClick={handleSendMessage}>
                             <FaPaperPlane />
                         </button>

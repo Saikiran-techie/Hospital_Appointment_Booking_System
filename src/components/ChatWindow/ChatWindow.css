@@ -132,6 +132,64 @@
     cursor: pointer;
 }
 
+/* upload-preview container */
+.upload-preview-container {
+    padding: 4px 6px;
+    background: #f0f2f5;
+    border-top: 1px solid #ddd;
+}
+
+.upload-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-top: 6px;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-icon {
+    font-size: 20px;
+    color: #0073b1;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #333;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.remove-upload {
+    background: transparent;
+    border: none;
+    color: #e63946;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+    transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.remove-upload:hover {
+    color: #ff1c1c;
+    transform: scale(1.2);
+}
+
+.remove-upload:focus {
+    outline: none;
+}
+
 /* Minimized state */
 .chat-window.minimized {
     height: 50px;
