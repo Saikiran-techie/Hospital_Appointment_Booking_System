@@ -21,7 +21,8 @@ import {
     FaWindowMaximize,
     FaTimes,
     FaFileAlt,
-    FaFileImage
+    FaFileImage,
+    FaComments
 } from 'react-icons/fa';
 import './ChatWindow.css';
 
@@ -34,7 +35,6 @@ function ChatWindow({ appointmentId, otherPartyLabel, onClose, otherPartyName })
     const [isMinimized, setIsMinimized] = useState(false);
     const [currentRole, setCurrentRole] = useState('User');
 
-    // Fetch current user role
     useEffect(() => {
         if (!currentUser) return;
 
@@ -54,7 +54,6 @@ function ChatWindow({ appointmentId, otherPartyLabel, onClose, otherPartyName })
         fetchUserRole();
     }, [currentUser]);
 
-    // Real-time message listener
     useEffect(() => {
         if (!appointmentId) return;
 
@@ -79,7 +78,6 @@ function ChatWindow({ appointmentId, otherPartyLabel, onClose, otherPartyName })
         let attachmentURL = '';
         let attachmentType = '';
 
-        // Handle file upload
         if (uploadFile) {
             const fileRef = ref(storage, `chatAttachments/${appointmentId}/${Date.now()}_${uploadFile.name}`);
             await uploadBytes(fileRef, uploadFile);
@@ -137,37 +135,45 @@ function ChatWindow({ appointmentId, otherPartyLabel, onClose, otherPartyName })
             {!isMinimized && (
                 <>
                     <div className="chat-messages">
-                        {messages.map(msg => (
-                            <div
-                                key={msg.id}
-                                className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}
-                            >
-                                <div className="meta">
-                                    <strong>{getDisplayName(msg)}</strong> <span>{formatTime(msg.createdAt)}</span>
-                                </div>
-
-                                {msg.messageText && <div className="text">{msg.messageText}</div>}
-
-                                {msg.attachmentURL && (
-                                    <div className="attachment">
-                                        {msg.attachmentType.startsWith('image/') && (
-                                            <img src={msg.attachmentURL} alt="attachment" />
-                                        )}
-                                        {msg.attachmentType === 'application/pdf' && (
-                                            <a href={msg.attachmentURL} target="_blank" rel="noreferrer">
-                                                <FaFilePdf /> View PDF
-                                            </a>
-                                        )}
-                                        {msg.attachmentType.startsWith('audio/') && (
-                                            <audio controls src={msg.attachmentURL}>
-                                                <track kind="captions" />
-                                                Your browser does not support the audio element.
-                                            </audio>
-                                        )}
-                                    </div>
-                                )}
+                        {messages.length === 0 ? (
+                            <div className="empty-chat d-flex flex-column align-items-center justify-content-center text-center p-4">
+                                <FaComments size={40} color="#ccc" className="mb-3" />
+                                <p className="text-muted mb-0">No conversation yet</p>
+                                <small className="text-muted">Start your chat with {otherPartyLabel}</small>
                             </div>
-                        ))}
+                        ) : (
+                            messages.map(msg => (
+                                <div
+                                    key={msg.id}
+                                    className={`message ${msg.senderId === currentUser.uid ? 'sent' : 'received'}`}
+                                >
+                                    <div className="meta">
+                                        <strong>{getDisplayName(msg)}</strong> <span>{formatTime(msg.createdAt)}</span>
+                                    </div>
+
+                                    {msg.messageText && <div className="text">{msg.messageText}</div>}
+
+                                    {msg.attachmentURL && (
+                                        <div className="attachment">
+                                            {msg.attachmentType.startsWith('image/') && (
+                                                <img src={msg.attachmentURL} alt="attachment" />
+                                            )}
+                                            {msg.attachmentType === 'application/pdf' && (
+                                                <a href={msg.attachmentURL} target="_blank" rel="noreferrer">
+                                                    <FaFilePdf /> View PDF
+                                                </a>
+                                            )}
+                                            {msg.attachmentType.startsWith('audio/') && (
+                                                <audio controls src={msg.attachmentURL}>
+                                                    <track kind="captions" />
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ))
+                        )}
                         <div ref={chatEndRef}></div>
                     </div>
 
