@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col, Card, Spinner } from 'react-bootstrap';
+import { BsCalendar3, BsClock } from "react-icons/bs";
 import { getAuth } from 'firebase/auth';
 import { db } from '../../../firebase/firebaseConfig';
 import { collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import './BookAppointment.css';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 export function generatePatientCode(length = 8) {
@@ -16,16 +20,14 @@ export function generatePatientCode(length = 8) {
     return result;
 }
 
+const dayOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 const BookAppointment = () => {
-    // State to manage loading state
     const [isLoading, setIsLoading] = useState(false);
-    
-    // State to hold form data
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
         phone: '',
-        dob: '',
         age: '',
         gender: '',
         bloodGroup: '',
@@ -41,155 +43,188 @@ const BookAppointment = () => {
 
     const [doctors, setDoctors] = useState([]);
     const [selectedSpecialization, setSelectedSpecialization] = useState('');
+    const [availableTimes, setAvailableTimes] = useState([]);
+    const [availableDates, setAvailableDates] = useState([]);
+    const [selectedDoctorAvailability, setSelectedDoctorAvailability] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchDoctorsAndFormData = async () => {
+        const fetchDoctors = async () => {
             try {
                 const querySnapshot = await getDocs(collection(db, 'doctors'));
-                const doctorList = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+                const doctorList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setDoctors(doctorList);
 
-                // Load saved form data from sessionStorage
-                const savedFormData = sessionStorage.getItem('appointmentFormData');
-                if (savedFormData) {
-                    const parsedData = JSON.parse(savedFormData);
-                    setFormData(parsedData);
-
-                    // Set specialization for selected doctor (use the doctorList we just fetched)
-                    const selectedDoc = doctorList.find(d => d.id === parsedData.doctor);
-                    if (selectedDoc) {
-                        setSelectedSpecialization(selectedDoc.specialization);
-                    }
+                const saved = sessionStorage.getItem('appointmentFormData');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    setFormData(parsed);
+                    const selectedDoc = doctorList.find(d => d.id === parsed.doctor);
+                    if (selectedDoc) setSelectedSpecialization(selectedDoc.specialization);
                 }
             } catch (error) {
-                console.error('Error fetching doctors or loading saved form data:', error);
+                console.error('Error fetching doctors:', error);
             }
         };
 
-        fetchDoctorsAndFormData();
-    }, []);      
+        fetchDoctors();
+    }, []);
 
     useEffect(() => {
-        // if paymentSuccess param is passed in URL — clear sessionStorage
         const params = new URLSearchParams(window.location.search);
-        if (params.get('paymentSuccess') === 'true') {
-            sessionStorage.removeItem('appointmentFormData');
-        }
-    }, []);      
+        if (params.get('paymentSuccess') === 'true') sessionStorage.removeItem('appointmentFormData');
+    }, []);
+
+    const formatAvailabilityText = (availabilityObj) => {
+        if (typeof availabilityObj !== 'object' || availabilityObj === null) return 'No availability set';
+
+        const orderedDays = [
+            'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+        ];
+
+        const slots = orderedDays
+            .filter((day) => availabilityObj[day]?.enabled)
+            .map((day) => {
+                const { start, end } = availabilityObj[day];
+                const startFormatted = start ? formatTime(start) : '';
+                const endFormatted = end ? formatTime(end) : '';
+                return `${day.slice(0, 3)}: ${startFormatted} - ${endFormatted}`;
+            });
+
+        return slots.length > 0 ? slots.join(' | ') : 'No availability set';
+    };
+
+    // Helper to format 24h time to 12h with AM/PM
+    const formatTime = (timeStr) => {
+        const [hour, minute] = timeStr.split(':');
+        const h = parseInt(hour, 10);
+        const period = h >= 12 ? 'PM' : 'AM';
+        const formattedHour = h % 12 || 12;
+        return `${formattedHour}:${minute} ${period}`;
+    };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
 
         if (name === 'doctor') {
-            const selectedDoc = doctors.find((d) => d.id === value);
-            setSelectedSpecialization(selectedDoc ? selectedDoc.specialization : '');
+            const selectedDoctor = doctors.find((doc) => doc.id === e.target.value);
 
-            setFormData((prev) => ({
-                ...prev,
-                doctor: value,
-                specialization: selectedDoc ? selectedDoc.specialization : '',
-            }));
+            if (selectedDoctor) {
+                setSelectedSpecialization(selectedDoctor.specialization);
+                const formattedAvailability = formatAvailabilityText(selectedDoctor.availability);
+                setSelectedDoctorAvailability(formattedAvailability);
+                setFormData(prev => ({ ...prev, doctor: value, specialization: selectedDoctor.specialization }));
+                calculateAvailableDatesAndTimes(selectedDoctor);
+            }
         }
 
-        if (name === 'dob') {
-            calculateAge(value);
+        if (name === 'appointmentDate') {
+            const selectedDoc = doctors.find(d => d.id === formData.doctor);
+            if (selectedDoc) calculateAvailableDatesAndTimes(selectedDoc, value);
         }
     };
 
-    const calculateAge = (dob) => {
-        const birthDate = new Date(dob);
-        const today = new Date();
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
+    const calculateAvailableDatesAndTimes = (selectedDoctor, selectedDate) => {
+        const availability = selectedDoctor.availability;
+
+        if (!availability || typeof availability !== 'object') {
+            setAvailableTimes([]);
+            setAvailableDates([]);
+            return;
         }
-        setFormData((prev) => ({
-            ...prev,
-            age: age,
-        }));
+
+        const today = new Date();
+        const next7Days = [];
+
+        for (let i = 0; i < 14; i++) {
+            const date = new Date();
+            date.setDate(today.getDate() + i);
+            const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
+
+            const dayAvailability = availability[dayOfWeek];
+            if (dayAvailability && dayAvailability.enabled) {
+                const formattedDate = date.toISOString().split('T')[0];
+                next7Days.push(formattedDate);
+            }
+        }
+
+        setAvailableDates(next7Days);
+
+        // If user has selected a date, update times
+        if (selectedDate) {
+            const date = new Date(selectedDate);
+            const day = date.toLocaleString('en-US', { weekday: 'long' });
+            const dayAvailability = availability[day];
+
+            if (!dayAvailability || !dayAvailability.enabled) {
+                setAvailableTimes([]);
+            } else {
+                const slots = generateTimeSlots(dayAvailability.start, dayAvailability.end);
+                setAvailableTimes(slots);
+            }
+        }
+    };
+
+    const generateTimeSlots = (start, end) => {
+        const slots = [];
+        let [startHour, startMin] = start.split(':').map(Number);
+        let [endHour, endMin] = end.split(':').map(Number);
+
+        let current = new Date();
+        current.setHours(startHour, startMin, 0, 0);
+
+        const endTime = new Date();
+        endTime.setHours(endHour, endMin, 0, 0);
+
+        while (current < endTime) {
+            const time = current.toTimeString().slice(0, 5);
+            slots.push(time);
+            current.setMinutes(current.getMinutes() + 30);
+        }
+
+        return slots;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const requiredFields = [
-            'fullName',
-            'email',
-            'phone',
-            'dob',
-            'gender',
-            'address',
-            'doctor',
-            'specialization',
-            'appointmentDate',
-            'appointmentTime',
-            'consultationType',
-            'location',
-        ];
-
+        const requiredFields = ['fullName', 'email', 'phone', 'gender', 'address', 'doctor', 'specialization', 'appointmentDate', 'appointmentTime', 'consultationType', 'location'];
         for (let field of requiredFields) {
-            if (!formData[field]) {
-                alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1')}`);
-                return;
-            }
+            if (!formData[field]) return alert(`Please fill in the ${field.replace(/([A-Z])/g, ' $1')}`);
         }
 
         try {
             const auth = getAuth();
             const user = auth.currentUser;
-
-            if (!user) {
-                alert('You must be logged in to book an appointment.');
-                return;
-            }
+            if (!user) return alert('You must be logged in to book.');
 
             setIsLoading(true);
             const selectedDoctor = doctors.find(d => d.id === formData.doctor);
-            if (!selectedDoctor) {
-                alert('Selected doctor not found.');
-                return;
-            }
+            if (!selectedDoctor) return alert('Doctor not found');
 
             const patientCode = generatePatientCode();
-
             const appointmentData = {
                 ...formData,
-                doctor: selectedDoctor.fullName,  // ← ✅ use name here
-                patientCode: patientCode,
+                doctor: selectedDoctor.fullName,
+                patientCode,
                 bookedBy: user.uid,
-                doctorId: selectedDoctor.id,       // ← keep doc id here
+                doctorId: selectedDoctor.id,
                 status: 'Pending Payment',
                 createdAt: serverTimestamp(),
             };
 
             const docRef = await addDoc(collection(db, 'appointments'), appointmentData);
-
-            console.log('Appointment booked with ID:', docRef.id);
-
-            sessionStorage.setItem('appointmentFormData', JSON.stringify(formData)); // Save form data to sessionStorage
-
+            sessionStorage.setItem('appointmentFormData', JSON.stringify(formData));
             navigate('/patient/bookAppointment/PaymentPage', {
-                state: {
-                    consultationType: formData.consultationType,
-                    appointmentId: docRef.id,
-                },
+                state: { consultationType: formData.consultationType, appointmentId: docRef.id },
             });
         } catch (error) {
             console.error('Error booking appointment:', error);
-            alert('Error booking appointment. Please try again.');
+            alert('Booking failed. Try again.');
         } finally {
             setIsLoading(false);
-          }
+        }
     };
 
     return (
@@ -241,19 +276,12 @@ const BookAppointment = () => {
                         <Col md={6}>
                             <Form.Group className="d-flex">
                                 <Form.Control
-                                    type="date"
-                                    name="dob"
-                                    value={formData.dob}
-                                    onChange={handleChange}
-                                    required
-                                />
-                                <Form.Control
                                     type="number"
                                     placeholder="Age"
                                     name="age"
                                     value={formData.age}
-                                    disabled
-                                    className="ms-2"
+                                    onChange={handleChange}
+                                    required
                                 />
                             </Form.Group>
                         </Col>
@@ -296,7 +324,7 @@ const BookAppointment = () => {
                             </Form.Group>
                         </Col>
                     </Row>
-                    
+
                     <Row className="mb-3">
                         <Col md={12}>
                             <Form.Group>
@@ -331,16 +359,15 @@ const BookAppointment = () => {
 
                     <Row className="mb-3">
                         <Col md={6}>
-                            <Form.Select
-                                name="doctor"
+                            <Form.Select name="doctor"
                                 value={formData.doctor}
                                 onChange={handleChange}
                                 required
                             >
                                 <option value="">Select Doctor</option>
-                                {doctors.map((doc) => (
+                                {doctors.map(doc => (
                                     <option key={doc.id} value={doc.id}>
-                                        Dr. {doc.fullName} — {doc.specialization}
+                                        Dr. {doc.name} — {doc.specialization}
                                     </option>
                                 ))}
                             </Form.Select>
@@ -357,28 +384,63 @@ const BookAppointment = () => {
                         </Col>
                     </Row>
 
-                    <Row className="mb-3">
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Control
-                                    type="date"
-                                    name="appointmentDate"
-                                    value={formData.appointmentDate}
-                                    onChange={handleChange}
-                                    required
+                    {selectedDoctorAvailability && (
+                        <Row className="mb-3">
+                            <Col>
+                                <div className="availability-info text-success">
+                                    🗓️ <strong>Availability:</strong> {selectedDoctorAvailability}
+                                </div>
+                            </Col>
+                        </Row>
+                    )}
+
+                    <Row className="mb-3 align-items-center">
+                        {/* Date Picker */}
+                        <Col md={6} className="mb-3 position-relative">
+                            <label htmlFor="appointmentDate" className="form-label d-block">Select Date</label>
+                            <div className="input-group">
+                                {/* Calendar Icon */}
+                                <span className="input-group-text bg-light">
+                                    <BsCalendar3 className="text-primary fs-5" />
+                                </span>
+                                <DatePicker
+                                    id="appointmentDate"
+                                    selected={formData.appointmentDate ? new Date(formData.appointmentDate) : null}
+                                    onChange={(date) => {
+                                        const formatted = date.toISOString().split("T")[0];
+                                        setFormData(prev => ({ ...prev, appointmentDate: formatted }));
+                                        const selectedDoc = doctors.find(d => d.id === formData.doctor);
+                                        if (selectedDoc) calculateAvailableDatesAndTimes(selectedDoc, formatted);
+                                    }}
+                                    includeDates={availableDates.map(date => new Date(date))}
+                                    dateFormat="EEEE, MMMM d, yyyy"
+                                    placeholderText="Select Date"
+                                    className="form-control"
                                 />
-                            </Form.Group>
+                            </div>
                         </Col>
-                        <Col md={6}>
-                            <Form.Group>
-                                <Form.Control
-                                    type="time"
+
+                        {/* Time Picker */}
+                        <Col md={6} className="mb-3 position-relative">
+                            <label htmlFor="appointmentTime" className="form-label d-block">Select Time</label>
+                            <div className="input-group">
+                                {/* Clock Icon */}
+                                <span className="input-group-text bg-light">
+                                    <BsClock className="text-success fs-5" />
+                                </span>
+                                <Form.Select
+                                    id="appointmentTime"
                                     name="appointmentTime"
                                     value={formData.appointmentTime}
                                     onChange={handleChange}
                                     required
-                                />
-                            </Form.Group>
+                                >
+                                    <option value="">Select Time</option>
+                                    {availableTimes.map(time => (
+                                        <option key={time} value={time}>{time}</option>
+                                    ))}
+                                </Form.Select>
+                            </div>
                         </Col>
                     </Row>
 
@@ -394,29 +456,45 @@ const BookAppointment = () => {
                                     <option value="">Select Consultation Type</option>
                                     <option value="In-Person">In-Person</option>
                                     <option value="Video-Call">Video-Call</option>
-                                    <option value="Home Visit">Home Visit</option>
                                 </Form.Select>
                             </Form.Group>
                         </Col>
                         <Col md={6}>
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Location for Visit"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </Form.Group>
+                            <Form.Select
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select Location</option>
+                                <option value="N/A">N/A</option>
+                                <option value="Kukatpally">Kukatpally</option>
+                                <option value="Miyapur">Miyapur</option>
+                                <option value="Gachibowli">Gachibowli</option>
+                                <option value="Mehdipatnam">Mehdipatnam</option>
+                                <option value="Ameerpet">Ameerpet</option>
+                                <option value="Secunderabad">Secunderabad</option>
+                                <option value="Hitech City">Hitech City</option>
+                                <option value="Dilsukhnagar">Dilsukhnagar</option>
+                                <option value="LB Nagar">LB Nagar</option>
+                                <option value="Somajiguda">Somajiguda</option>
+                            </Form.Select>
                         </Col>
                     </Row>
 
-                    <Button onClick={handleSubmit} variant="success" className="w-50 mx-auto d-block" disabled={isLoading}>
-                        {isLoading ? (
-                            <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                        ) : 'Confirm Appointment'}
-                    </Button>
+                    <div className="d-flex justify-content-center mt-3">
+                        <Button
+                            onClick={handleSubmit}
+                            variant="success"
+                            className="confirm-btn px-4 py-2"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                            ) : 'Confirm Appointment'}
+                        </Button>
+                    </div>
+
                 </Form>
             </Card>
         </div>

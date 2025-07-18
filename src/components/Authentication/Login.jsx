@@ -1,42 +1,33 @@
+// ✅ Updated Login.jsx with toast notifications and automatic role-based redirect
 import React, { useState } from 'react';
 import { Form, Button, Card, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { auth } from '../../firebase/firebaseConfig';
 import { setAuthPersistence, loginWithEmailPassword, signInWithGoogle } from '../../services/authService';
 import { getUserData } from '../../services/firestoreService';
 import './Auth.css';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    role: '',
-    rememberMe: false,
-  });
+  const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
-  const togglePassword = () => {
-    setShowPassword(prev => !prev);
-  };
+  const togglePassword = () => setShowPassword((prev) => !prev);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password, role, rememberMe } = formData;
+    const { email, password, rememberMe } = formData;
 
-    if (!role) {
-      Swal.fire('Select Role', 'Please select a role before logging in.', 'warning');
+    if (!email || !password) {
+      toast.warn('Please enter email and password');
       return;
     }
 
@@ -47,89 +38,51 @@ const Login = () => {
       const userDoc = await getUserData(user.uid);
 
       if (!userDoc.exists()) {
-        setLoading(false);
-        Swal.fire('User Not Found', 'No user record found. Please signup first.', 'error');
+        toast.error('User not found. Please sign up first.');
         await auth.signOut();
+        setLoading(false);
         return;
       }
 
       const storedRole = userDoc.data().role;
-      if (storedRole !== role.toLowerCase()) {
-        setLoading(false);
-        Swal.fire('Role Mismatch', `Selected role doesn't match your registered role (${storedRole}).`, 'error');
-        await auth.signOut();
-        return;
-      }
-
-      setLoading(false);
-      Swal.fire('Login Successful!', 'Welcome back!', 'success');
-      navigate(role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
-
+      toast.success('Login successful!');
+      navigate(`/${storedRole}/dashboard`);
     } catch (error) {
+      toast.error(error.message);
+    } finally {
       setLoading(false);
-      Swal.fire('Login Failed', error.message, 'error');
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      // No loading spinner yet — open popup first
       await setAuthPersistence(formData.rememberMe);
       const { user } = await signInWithGoogle();
 
       if (!user || !user.uid) {
-        Swal.fire('Sign-in Error', 'Could not retrieve user info. Try again.', 'error');
+        toast.error('Google sign-in failed. Try again.');
         return;
       }
 
-      // Prompt for role selection AFTER Google sign-in
-      const { value: role } = await Swal.fire({
-        title: 'Select Your Role',
-        input: 'select',
-        inputOptions: {
-          patient: 'Patient',
-          doctor: 'Doctor',
-        },
-        inputPlaceholder: 'Select role',
-        showCancelButton: true,
-      });
-
-      if (!role) {
-        await auth.signOut();
-        Swal.fire('Cancelled', 'Role selection is required to proceed.', 'info');
-        return;
-      }
-
-      // NOW start loading spinner for verification
       setLoading(true);
-
       const userDoc = await getUserData(user.uid);
+
       if (!userDoc.exists()) {
-        setLoading(false);
-        Swal.fire('User Not Found', 'No user record found. Please signup first.', 'error');
+        toast.error('User not found. Please sign up first.');
         await auth.signOut();
+        setLoading(false);
         return;
       }
 
       const storedRole = userDoc.data().role;
-      if (storedRole !== role) {
-        setLoading(false);
-        Swal.fire('Role Mismatch', `Selected role doesn't match your registered role (${storedRole}).`, 'error');
-        await auth.signOut();
-        return;
-      }
-
-      setLoading(false);
-      await Swal.fire('Login Successful!', 'Welcome back!', 'success');
-      navigate(role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
-
-
+      toast.success('Login successful!');
+      navigate(`/${storedRole}/dashboard`);
     } catch (error) {
+      toast.error(error.message);
+    } finally {
       setLoading(false);
-      Swal.fire('Login Failed', error.message, 'error');
     }
   };
-  
 
   return (
     <div className="auth-wrapper">
@@ -138,7 +91,7 @@ const Login = () => {
           <Col md={7} lg={6}>
             <Card className="auth-card p-4">
               <Card.Body>
-                <h2 className="auth-title">Welcome Back</h2>
+                <h2 className="auth-title">Welcome Back 👋</h2>
 
                 <Form onSubmit={handleSubmit}>
                   <Form.Group controlId="email" className="mb-3">
@@ -172,31 +125,23 @@ const Login = () => {
                     </div>
                   </Form.Group>
 
-                  <Form.Group controlId="role" className="mb-3">
-                    <Form.Select name="role" value={formData.role} onChange={handleChange} required>
-                      <option value="">Select Role</option>
-                      <option value="patient">Patient</option>
-                      <option value="doctor">Doctor</option>
-                    </Form.Select>
-                  </Form.Group>
-
-                  <div className="form-switch mb-3 d-flex justify-content-between align-items-center">
+                  <div className="form-switch mb-4 d-flex justify-content-between align-items-center">
                     <Form.Check
                       type="checkbox"
                       label="Remember Me"
                       name="rememberMe"
                       checked={formData.rememberMe}
-                      onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                      onChange={handleChange}
                     />
                     <a href="/reset-password" className="auth-link">Forgot Password?</a>
                   </div>
 
-                  <Button type="submit" className="auth-button w-100 mb-3">
+                  <Button type="submit" className="auth-button w-100 mb-2">
                     Login
                   </Button>
                 </Form>
 
-                <div className="text-center my-3 text-muted">or</div>
+                <div className="text-center my-2 text-muted">or</div>
 
                 <Button
                   variant="outline-secondary"

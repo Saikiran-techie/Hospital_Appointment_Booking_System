@@ -4,7 +4,7 @@ import { db } from '../firebase/firebaseConfig';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 // Save general user data to 'users' collection
-export const saveUserData = async (uid, name, email, role, provider) => {
+export const saveUserData = async (uid, name, email, role, provider, specialization = '') => {
     try {
         const userRef = doc(db, 'users', uid);
         await setDoc(userRef, {
@@ -12,6 +12,7 @@ export const saveUserData = async (uid, name, email, role, provider) => {
             email,
             role: role.toLowerCase(),
             provider,
+            ...(specialization && { specialization }),
             createdAt: serverTimestamp()
         }, { merge: true });
     } catch (error) {
@@ -21,7 +22,7 @@ export const saveUserData = async (uid, name, email, role, provider) => {
 };
 
 // Save role-specific user data (to 'patients' or 'doctors' collection)
-export const saveRoleSpecificData = async (uid, name, email, role) => {
+export const saveRoleSpecificData = async (uid, name, email, role, specialization = '') => {
     try {
         const validRole = role.toLowerCase();
         if (!['patient', 'doctor'].includes(validRole)) {
@@ -37,6 +38,7 @@ export const saveRoleSpecificData = async (uid, name, email, role) => {
             name,
             email,
             status: 'active',
+            ...(role.toLowerCase() === 'doctor' && specialization && { specialization }),
             createdAt: serverTimestamp()
         });
     } catch (error) {

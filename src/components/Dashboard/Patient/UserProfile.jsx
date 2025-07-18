@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getUserDetails, saveUserDetails, uploadProfilePhoto } from '../../../services/userService';
-import swal from 'sweetalert';
+import { toast } from 'react-toastify';
 import './UserProfile.css';
 import { useAuth } from '../../../context/AuthContext';
 
 const UserProfile = ({ onProfilePhotoUpdate }) => {
     const { currentUser } = useAuth();
+    const fileInputRef = useRef(null);
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -73,46 +74,23 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
             if (!validTypes.includes(file.type)) {
-                swal("Invalid file!", "Only PNG, JPG and JPEG images are allowed.", "error");
+                toast.error('Only PNG, JPG and JPEG images are allowed.');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                swal("File too large!", "Maximum size allowed is 2MB.", "error");
+                toast.error('Maximum size allowed is 2MB.');
                 return;
             }
             setSelectedImage(file);
-        }
-    };
-
-    const handlePhotoUpload = async () => {
-        try {
-            if (!currentUser?.uid) {
-                swal("Error!", "User data is missing. Please reload the page.", "error");
-                return;
-            }
-            setLoading(true);
-            const downloadURL = await uploadProfilePhoto(currentUser.uid, selectedImage);
-            const updatedFormData = { ...formData, photoURL: downloadURL };
-
-            await saveUserDetails(currentUser.uid, updatedFormData);
-            setFormData(updatedFormData);
-            setSelectedImage(null);
-
-            if (typeof onProfilePhotoUpdate === "function") {
-                onProfilePhotoUpdate(downloadURL);
-            }
-
-            swal("Success!", "Profile photo updated successfully!", "success");
-            setLoading(false);
-        } catch (error) {
-            console.error("Error uploading photo:", error);
-            swal("Oops!", `Something went wrong: ${error.message}`, "error");
-            setLoading(false);
         }
     };
 
@@ -121,19 +99,26 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
         if (validateForm()) {
             try {
                 setLoading(true);
-                if (!currentUser || !currentUser.uid) {
-                    swal("Error!", "User data is missing. Please reload the page.", "error");
-                    setLoading(false);
-                    return;
+                let updatedFormData = { ...formData };
+
+                if (selectedImage && currentUser?.uid) {
+                    const downloadURL = await uploadProfilePhoto(currentUser.uid, selectedImage);
+                    updatedFormData.photoURL = downloadURL;
+
+                    if (typeof onProfilePhotoUpdate === "function") {
+                        onProfilePhotoUpdate(downloadURL);
+                    }
                 }
 
-                await saveUserDetails(currentUser.uid, formData);
-                swal("Success!", "Profile updated successfully!", "success");
+                await saveUserDetails(currentUser.uid, updatedFormData);
+                setFormData(updatedFormData);
                 setSelectedImage(null);
-                setLoading(false);
+
+                toast.success('Profile updated successfully!');
             } catch (error) {
-                console.error('Error saving user profile:', error);
-                swal("Oops!", `Something went wrong: ${error.message}`, "error");
+                console.error('Error saving profile:', error);
+                toast.error(`Something went wrong: ${error.message}`);
+            } finally {
                 setLoading(false);
             }
         }
@@ -142,28 +127,35 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
     return (
         <div className="profile-container">
             <div className="profile-card">
-                <h2>My Profile</h2>
+                <h3>My Profile</h3>
 
                 <div className="profile-image-container">
-                    <img
-                        src={selectedImage ? URL.createObjectURL(selectedImage) : formData.photoURL || '/default-profile.png'}
-                        alt="Profile"
-                        className="profile-photo"
-                    />
+                    <button
+                        type="button"
+                        className="image-button"
+                        onClick={handleImageClick}
+                        title="Click to change photo"
+                        style={{ border: 'none', background: 'none', padding: 0 }}
+                    >
+                        <img
+                            src={
+                                selectedImage
+                                    ? URL.createObjectURL(selectedImage)
+                                    : formData.photoURL || '/default-profile.png'
+                            }
+                            alt="Profile"
+                            className="profile-photo"
+                        />
+                        <i className="fas fa-plus edit-icon"></i>
+                    </button>
 
                     <input
                         type="file"
                         accept="image/png, image/jpeg, image/jpg"
                         onChange={handleImageChange}
-                        className="choose-file-input"
-                        disabled={loading}
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
                     />
-
-                    {selectedImage && (
-                        <button type="button" className="upload-btn" onClick={handlePhotoUpload} disabled={loading}>
-                            {loading ? 'Uploading...' : 'Upload'}
-                        </button>
-                    )}
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -171,7 +163,7 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
                         <div className="column">
                             <div className="form-group">
                                 <label htmlFor='fullname'>Full Name</label>
-                                <input type="text" value={formData.name} disabled />
+                                <input type="text" value={formData.fullName} disabled />
                             </div>
 
                             <div className="form-group">
@@ -222,7 +214,6 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
                             {loading ? 'Saving...' : 'Save'}
                         </button>
                     </div>
-
                 </form>
             </div>
         </div>

@@ -21,12 +21,12 @@
 }
 
 /* Title */
-.profile-card h2 {
+.profile-card h3 {
     text-align: center;
     margin-bottom: 25px;
     color: #333;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 24px;
 }
 
 /* Image Section */
@@ -73,6 +73,30 @@
 .upload-btn:hover {
     background-color: #2980b9;
     opacity: 0.95;
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    background: #fff;
+    padding: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.availability-section {
+    margin-top: 30px;
+}
+
+.availability-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 /* Form Styling */

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getDoctorDetails, saveDoctorDetails, uploadProfilePhoto } from '../../../services/doctorService';
 import { useAuth } from '../../../context/AuthContext';
-import swal from 'sweetalert';
+import { toast } from 'react-toastify';
 import '../Patient/UserProfile.css';
+import { Row, Col, Form } from 'react-bootstrap';
 
 export function generateDoctorCode(length = 8) {
     const characters = 'DOC0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -13,9 +14,21 @@ export function generateDoctorCode(length = 8) {
     return result;
 }
 
+const defaultAvailability = {
+    Sunday: { enabled: false, start: '', end: '' },
+    Monday: { enabled: false, start: '', end: '' },
+    Tuesday: { enabled: false, start: '', end: '' },
+    Wednesday: { enabled: false, start: '', end: '' },
+    Thursday: { enabled: false, start: '', end: '' },
+    Friday: { enabled: false, start: '', end: '' },
+    Saturday: { enabled: false, start: '', end: '' },
+};
+
 const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
     const { currentUser } = useAuth();
     const doctorData = currentUser;
+
+    const fileInputRef = useRef(null);
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -29,6 +42,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
         specialization: '',
         photoURL: '',
         doctorCode: '',
+        availability: defaultAvailability,
     });
 
     const [errors, setErrors] = useState({});
@@ -60,6 +74,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                 setFormData((prev) => ({
                     ...prev,
                     ...updatedData,
+                    availability: { ...defaultAvailability, ...data.availability },
                 }));
             }
             setProfileLoading(false);
@@ -89,6 +104,32 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
         }));
     };
 
+    const handleAvailabilityToggle = (day) => {
+        setFormData((prev) => ({
+            ...prev,
+            availability: {
+                ...prev.availability,
+                [day]: {
+                    ...prev.availability[day],
+                    enabled: !prev.availability[day].enabled,
+                },
+            },
+        }));
+    };
+
+    const handleAvailabilityChange = (day, field, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            availability: {
+                ...prev.availability,
+                [day]: {
+                    ...prev.availability[day],
+                    [field]: value,
+                },
+            },
+        }));
+    };
+
     const validateForm = () => {
         const newErrors = {};
         if (!formData.phone.match(/^[6-9]\d{9}$/)) newErrors.phone = 'Valid 10-digit phone number required';
@@ -101,46 +142,23 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const handleImageClick = () => {
+        fileInputRef.current?.click();
+    };
+
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
             if (!validTypes.includes(file.type)) {
-                swal("Invalid file!", "Only PNG, JPG and JPEG images are allowed.", "error");
+                toast.error('Only PNG, JPG and JPEG images are allowed.');
                 return;
             }
             if (file.size > 2 * 1024 * 1024) {
-                swal("File too large!", "Maximum size allowed is 2MB.", "error");
+                toast.error('Maximum size allowed is 2MB.');
                 return;
             }
             setSelectedImage(file);
-        }
-    };
-
-    const handlePhotoUpload = async () => {
-        try {
-            if (!doctorData?.uid) {
-                swal("Error!", "Doctor data is missing. Please reload the page.", "error");
-                return;
-            }
-            setLoading(true);
-            const downloadURL = await uploadProfilePhoto(doctorData.uid, selectedImage);
-            const updatedFormData = { ...formData, photoURL: downloadURL };
-
-            await saveDoctorDetails(doctorData.uid, updatedFormData);
-            setFormData(updatedFormData);
-            setSelectedImage(null);
-
-            if (typeof onProfilePhotoUpdate === "function") {
-                onProfilePhotoUpdate(downloadURL);
-            }
-
-            swal("Success!", "Profile photo updated successfully!", "success");
-            setLoading(false);
-        } catch (error) {
-            console.error("Error uploading photo:", error);
-            swal("Oops!", `Something went wrong: ${error.message}`, "error");
-            setLoading(false);
         }
     };
 
@@ -150,7 +168,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
             try {
                 setLoading(true);
                 if (!doctorData?.uid) {
-                    swal("Error!", "Doctor data is missing. Please reload the page.", "error");
+                    toast.error('Doctor data is missing. Please reload.');
                     setLoading(false);
                     return;
                 }
@@ -162,13 +180,21 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                     updatedFormData.doctorCode = generateDoctorCode();
                 }
 
+                if (selectedImage) {
+                    const downloadURL = await uploadProfilePhoto(doctorData.uid, selectedImage);
+                    updatedFormData.photoURL = downloadURL;
+                    if (typeof onProfilePhotoUpdate === 'function') {
+                        onProfilePhotoUpdate(downloadURL);
+                    }
+                }
+
                 await saveDoctorDetails(doctorData.uid, updatedFormData);
-                swal("Success!", "Profile updated successfully!", "success");
+                toast.success('Profile updated successfully!');
                 setSelectedImage(null);
                 setLoading(false);
             } catch (error) {
                 console.error('Error saving doctor profile:', error);
-                swal("Oops!", `Something went wrong: ${error.message}`, "error");
+                toast.error(`Something went wrong: ${error.message}`);
                 setLoading(false);
             }
         }
@@ -180,23 +206,28 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                 <h2>Doctor Profile</h2>
 
                 <div className="profile-image-container">
-                    <img
-                        src={selectedImage ? URL.createObjectURL(selectedImage) : formData.photoURL || '/default-profile.png'}
-                        alt="Profile"
-                        className="profile-photo"
-                    />
+                    <button
+                        type="button"
+                        className="image-button"
+                        onClick={handleImageClick}
+                        title="Click to change photo"
+                        style={{ border: 'none', background: 'none', padding: 0 }}
+                    >
+                        <img
+                            src={selectedImage ? URL.createObjectURL(selectedImage) : formData.photoURL || '/default-profile.png'}
+                            alt="Profile"
+                            className="profile-photo"
+                        />
+                        <i className="fas fa-edit edit-icon"></i>
+                    </button>
+
                     <input
                         type="file"
                         accept="image/png, image/jpeg, image/jpg"
                         onChange={handleImageChange}
-                        className="choose-file-input"
-                        disabled={loading}
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
                     />
-                    {selectedImage && (
-                        <button type="button" className="upload-btn" onClick={handlePhotoUpload} disabled={loading}>
-                            {loading ? 'Uploading...' : 'Upload'}
-                        </button>
-                    )}
                 </div>
 
                 {!doctorData ? (
@@ -209,12 +240,12 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                             <div className="column">
                                 <div className="form-group">
                                     <label htmlFor='text'>Full Name</label>
-                                            <input type="text" value={formData.fullName} disabled />
+                                    <input type="text" value={formData.name} disabled />
                                 </div>
 
                                 <div className="form-group">
                                     <label htmlFor='text'>Specialization</label>
-                                    <input type="text" name="specialization" value={formData.specialization} onChange={handleChange} />
+                                    <input type="text" name="specialization" value={formData.specialization} disabled />
                                     {errors.specialization && <span className="error">{errors.specialization}</span>}
                                 </div>
 
@@ -236,7 +267,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor='text'>Phone</label>
+                                    <label htmlFor='phone'>Phone</label>
                                     <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
                                     {errors.phone && <span className="error">{errors.phone}</span>}
                                 </div>
@@ -245,11 +276,11 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                             <div className="column">
                                 <div className="form-group">
                                     <label htmlFor='email'>Email</label>
-                                    <input type="email" value={doctorData.email || ''} disabled />
+                                    <input type="email" value={formData.email} disabled />
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor='text'>Doctor ID</label>
+                                    <label htmlFor='id'>Doctor ID</label>
                                     <input type="text" value={formData.doctorCode} disabled />
                                 </div>
 
@@ -259,7 +290,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor='bloodGroup'>Blood Group</label>
+                                    <label htmlFor='Bg'>Blood Group</label>
                                     <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange}>
                                         <option value="">Select Blood Group</option>
                                         <option>A+</option>
@@ -281,6 +312,39 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                                 </div>
                             </div>
                         </div>
+                        <hr />
+
+                        <h5 className="mt-4 mb-3 text-center">Weekly Availability</h5>
+                        <div className="availability-section">
+                            <Row>
+                                {Object.entries(defaultAvailability).map(([day]) => (
+                                    <Col key={day} xs={12} md={6} lg={3} className="mb-3">
+                                        <Form.Check
+                                            type="switch"
+                                            id={`switch-${day}`}
+                                            label={day}
+                                            checked={formData.availability[day]?.enabled}
+                                            onChange={() => handleAvailabilityToggle(day)}
+                                        />
+                                        {formData.availability[day]?.enabled && (
+                                            <div className="mt-2">
+                                                <Form.Control
+                                                    type="time"
+                                                    value={formData.availability[day].start}
+                                                    onChange={(e) => handleAvailabilityChange(day, 'start', e.target.value)}
+                                                    className="mb-2"
+                                                />
+                                                <Form.Control
+                                                    type="time"
+                                                    value={formData.availability[day].end}
+                                                    onChange={(e) => handleAvailabilityChange(day, 'end', e.target.value)}
+                                                />
+                                            </div>
+                                        )}
+                                    </Col>
+                                ))}
+                            </Row>
+                        </div>
 
                         <div className="text-center mt-4">
                             <button type="submit" className="save-btn" disabled={loading}>
@@ -293,7 +357,6 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
                                 )}
                             </button>
                         </div>
-
                     </form>
                 )}
             </div>

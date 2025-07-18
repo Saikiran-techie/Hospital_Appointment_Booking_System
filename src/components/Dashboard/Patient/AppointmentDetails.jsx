@@ -194,9 +194,9 @@ function AppointmentDetails() {
 
   return (
     <div className="container my-4">
-      <h2 className="mb-4 text-center" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
+      <h3 className="mb-4 text-center" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
         Appointment Details
-      </h2>
+      </h3>
 
       <div className="mt-3 mb-4 d-flex" style={{ justifyContent: 'end', gap: '10px' }}>
         <Button

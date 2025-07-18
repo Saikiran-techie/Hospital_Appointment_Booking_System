@@ -126,7 +126,7 @@ function PatientPrescriptions() {
 
     return (
         <div className="prescription-container">
-            <h2 className="section-title">Patient Prescriptions</h2>
+            <h3 className="section-title">Patient Prescriptions</h3>
 
             <div className="search-sort-container">
                 <input

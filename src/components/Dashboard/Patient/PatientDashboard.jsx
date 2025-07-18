@@ -74,16 +74,28 @@ const PatientDashboard = () => {
 
     return (
         <div>
-            <h2>Welcome, {userData?.name || 'Guest'}</h2>
-            <p className="text-muted">Here’s a quick overview of your recent activities.
-                You can view your upcoming appointments, past appointments, recent medical reports, active prescriptions and and manage your health records from the sidebar. 
-                If you need to book a new appointment, click the button below.</p>
-            <p className="text-muted">
-                If you have any questions or need assistance, feel free to contact our support team.
-            </p>
-            <p className="text-muted">
-                Thank you for choosing our hospital for your healthcare needs. We wish you good health and a speedy recovery!
-            </p>
+            <div className="welcome-text">
+                <h2 className="fw-bold mb-3">
+                    👋 Welcome, {userData?.name || 'Guest'}!
+                </h2>
+
+                <p className="lead text-secondary">
+                    Here's your personalized dashboard. You can view upcoming appointments, medical records, prescriptions, and more using the sidebar.
+                </p>
+
+                <p className="text-muted">
+                    To book a new appointment, simply click the button below. Managing your health has never been easier.
+                </p>
+
+                <p className="text-muted">
+                    Need help? Our support team is always here to assist you with anything you need.
+                </p>
+
+                <p className="text-muted fst-italic">
+                    Thank you for choosing our hospital — we’re honored to be part of your health journey. Stay well! 🌿
+                </p>
+            </div>
+
 
             <Card className="mt-4 dashboard-card shadow-sm">
                 <Card.Body>

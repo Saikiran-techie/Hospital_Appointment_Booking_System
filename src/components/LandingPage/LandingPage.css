@@ -380,11 +380,11 @@
     margin-bottom: 15px;
 }
 
-/* Footer background gradient */
+/* Footer Section */
 .custom-footer {
     background: linear-gradient(135deg, #0d6efd, #003366);
-    /* border-top-left-radius: 20px;
-    border-top-right-radius: 20px; */
+    position: relative;
+    padding-bottom: 30px;
 }
 
 /* Footer text */
@@ -402,12 +402,13 @@
     color: #f8f9fa;
     text-decoration: none;
     font-size: 1.05rem;
+    cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .footer-link:hover {
     color: #ffd966;
-    text-decoration: underline; 
+    text-decoration: underline;
 }
 
 /* Social media icons */
@@ -419,7 +420,8 @@
 
 .social-link:hover {
     color: #ffd966;
-    transform: scale(1.2); }
+    transform: scale(1.2);
+}
 
 /* Contact text */
 .footer-contact {
@@ -431,4 +433,35 @@
 .copyright-text {
     font-size: 1.05rem;
     color: #f8f9fa;
+}
+
+/* Logo */
+.footer-logo {
+    width: 40px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Scroll to top */
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 5px;
+    z-index: 1000;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 0.6rem 0.9rem;
+    border-radius: 50%;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+}
+
+.scroll-to-top:hover,
+.scroll-to-top:focus {
+    background-color: #003366;
+    transform: scale(1.1);
+    outline: none;
 }

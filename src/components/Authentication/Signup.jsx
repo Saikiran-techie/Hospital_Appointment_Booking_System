@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Form, Button, Card, Container, Row, Col } from 'react-bootstrap';
+import { Form, Button, Card, Container, Row, Col, Modal } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate, Link } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { registerWithEmailPassword, signInWithGoogle } from '../../services/authService';
 import { auth } from '../../firebase/firebaseConfig';
-import { saveUserData, saveRoleSpecificData} from '../../services/firestoreService';
+import { saveUserData, saveRoleSpecificData } from '../../services/firestoreService';
 import './Auth.css';
 import { useLoading } from '../../context/LoadingContext';
 
@@ -17,12 +17,17 @@ const Signup = () => {
         password: '',
         confirmPassword: '',
         role: '',
+        specialization: '',
         agree: false,
     });
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-
     const { setLoading } = useLoading();
+
+    const [showRoleModal, setShowRoleModal] = useState(false);
+    const [googleUser, setGoogleUser] = useState(null);
+    const [googleRole, setGoogleRole] = useState('');
+    const [googleSpecialization, setGoogleSpecialization] = useState('');
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -37,52 +42,31 @@ const Signup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { name, email, password, confirmPassword, role, agree } = formData;
+        const { name, email, password, confirmPassword, role, agree, specialization } = formData;
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$/;
 
-        if (name.trim().length < 3) {
-            Swal.fire('Invalid Name', 'Name must be at least 3 characters.', 'error');
-            return;
-        }
-        if (!emailRegex.test(email)) {
-            Swal.fire('Invalid Email', 'Please enter a valid email address.', 'error');
-            return;
-        }
-        if (!passwordRegex.test(password)) {
-            Swal.fire(
-                'Weak Password',
-                'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.',
-                'error'
-            );
-            return;
-        }
-        if (password !== confirmPassword) {
-            Swal.fire('Password Mismatch', 'Passwords do not match.', 'error');
-            return;
-        }
-        if (!role) {
-            Swal.fire('Role Required', 'Please select your role.', 'error');
-            return;
-        }
-        if (!agree) {
-            Swal.fire('Agreement Required', 'You must agree to the terms.', 'error');
-            return;
-        }
+        if (name.trim().length < 3) return toast.error('Name must be at least 3 characters.');
+        if (!emailRegex.test(email)) return toast.error('Please enter a valid email address.');
+        if (!passwordRegex.test(password)) return toast.error('Password must be strong.');
+        if (password !== confirmPassword) return toast.error('Passwords do not match.');
+        if (!role) return toast.error('Please select your role.');
+        if (role === 'Doctor' && specialization.trim().length < 2) return toast.error('Please enter your specialization.');
+        if (!agree) return toast.error('You must agree to the terms.');
 
         try {
             setLoading(true);
             const userCredential = await registerWithEmailPassword(name, email, password, role);
             const { uid } = userCredential.user;
 
-            await saveUserData(uid, name, email, role, 'email');
-            await saveRoleSpecificData(uid, name, email, role);
+            await saveUserData(uid, name, email, role, 'email', specialization);
+            await saveRoleSpecificData(uid, name, email, role, specialization);
 
-            Swal.fire('Success!', 'Account created successfully!', 'success');
+            toast.success('Account created successfully!');
             navigate('/login');
         } catch (error) {
-            Swal.fire('Signup Failed', error.message, 'error');
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -90,51 +74,43 @@ const Signup = () => {
 
     const handleGoogleSignup = async () => {
         try {
-            setLoading(true); // show spinner while Google popup is open
-
-            const { user } = await signInWithGoogle(); // only opens popup and returns user
-
-            setLoading(false); // stop spinner while showing role selection popup
-
-            const { value: selectedRole } = await Swal.fire({
-                title: 'Select Your Role',
-                input: 'select',
-                inputOptions: {
-                    Patient: 'Patient',
-                    Doctor: 'Doctor',
-                },
-                inputPlaceholder: 'Select a role',
-                confirmButtonText: 'Continue',
-                allowOutsideClick: false,
-                inputValidator: (value) => {
-                    if (!value) return 'You need to select a role!';
-                },
-            });
-
-            if (!selectedRole) {
-                await auth.signOut();
-                return;
-            }
-
-            setLoading(true); // spinner resumes while saving user data
-
-            await saveUserData(user.uid, user.displayName, user.email, selectedRole, 'google');
-            await saveRoleSpecificData(user.uid, user.displayName, user.email, selectedRole);
-
-            setLoading(false); // stop spinner before success alert
-
-            await Swal.fire('Success!', 'Google signup successful!', 'success');
-
-            navigate(`/${selectedRole.toLowerCase()}-dashboard`);
+            setLoading(true);
+            const { user } = await signInWithGoogle();
+            setGoogleUser(user);
+            setShowRoleModal(true); // open role modal
         } catch (error) {
-            console.error('Google Signup Error:', error);
-            await Swal.fire('Registration Failed', error.message, 'error');
+            toast.error(error.message);
             if (auth.currentUser) await auth.signOut();
         } finally {
             setLoading(false);
         }
     };
-      
+
+    const handleGoogleRoleSubmit = async () => {
+        if (!googleRole) return toast.error('Please select a role.');
+        if (googleRole === 'Doctor' && googleSpecialization.trim().length < 2) {
+            return toast.error('Please enter a valid specialization.');
+        }
+
+        try {
+            setLoading(true);
+            const uid = googleUser.uid;
+            const name = googleUser.displayName;
+            const email = googleUser.email;
+
+            await saveUserData(uid, name, email, googleRole, 'google', googleSpecialization);
+            await saveRoleSpecificData(uid, name, email, googleRole, googleSpecialization);
+
+            toast.success('Google signup successful!');
+            navigate(`/${googleRole.toLowerCase()}-dashboard`);
+        } catch (error) {
+            toast.error(error.message);
+            if (auth.currentUser) await auth.signOut();
+        } finally {
+            setShowRoleModal(false);
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="auth-wrapper">
@@ -176,12 +152,7 @@ const Signup = () => {
                                             onChange={handleChange}
                                             required
                                         />
-                                        <button
-                                            type="button"
-                                            className="password-toggle"
-                                            onClick={togglePassword}
-                                            aria-label="Toggle password visibility"
-                                        >
+                                        <button type="button" className="password-toggle" onClick={togglePassword}>
                                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                                         </button>
                                     </Form.Group>
@@ -195,28 +166,31 @@ const Signup = () => {
                                             onChange={handleChange}
                                             required
                                         />
-                                        <button
-                                            type="button"
-                                            className="password-toggle"
-                                            onClick={toggleConfirm}
-                                            aria-label="Toggle confirm password visibility"
-                                        >
+                                        <button type="button" className="password-toggle" onClick={toggleConfirm}>
                                             {showConfirm ? <FaEyeSlash /> : <FaEye />}
                                         </button>
                                     </Form.Group>
 
                                     <Form.Group className="mb-3">
-                                        <Form.Select
-                                            name="role"
-                                            value={formData.role}
-                                            onChange={handleChange}
-                                            required
-                                        >
+                                        <Form.Select name="role" value={formData.role} onChange={handleChange} required>
                                             <option value="">Select Your Role</option>
                                             <option value="Patient">Patient</option>
                                             <option value="Doctor">Doctor</option>
                                         </Form.Select>
                                     </Form.Group>
+
+                                    {formData.role === 'Doctor' && (
+                                        <Form.Group className="mb-3">
+                                            <Form.Control
+                                                type="text"
+                                                name="specialization"
+                                                placeholder="Specialization"
+                                                value={formData.specialization}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </Form.Group>
+                                    )}
 
                                     <Form.Group className="mb-4">
                                         <Form.Check
@@ -256,14 +230,53 @@ const Signup = () => {
                                 </Button>
 
                                 <p className="text-center auth-link-text">
-                                    Already have an account?{' '}
-                                    <Link to="/login" className="auth-link">Log In</Link>
+                                    Already have an account? <Link to="/login" className="auth-link">Log In</Link>
                                 </p>
                             </Card.Body>
                         </Card>
                     </Col>
                 </Row>
             </Container>
+
+            {/* Role selection modal for Google Signup */}
+            <Modal show={showRoleModal} onHide={() => setShowRoleModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Select Role</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3">
+                            <Form.Select
+                                value={googleRole}
+                                onChange={(e) => setGoogleRole(e.target.value)}
+                            >
+                                <option value="">Select Your Role</option>
+                                <option value="Patient">Patient</option>
+                                <option value="Doctor">Doctor</option>
+                            </Form.Select>
+                        </Form.Group>
+
+                        {googleRole === 'Doctor' && (
+                            <Form.Group className="mb-3">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Specialization"
+                                    value={googleSpecialization}
+                                    onChange={(e) => setGoogleSpecialization(e.target.value)}
+                                />
+                            </Form.Group>
+                        )}
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowRoleModal(false)}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleGoogleRoleSubmit}>
+                        Continue
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 };

@@ -9,17 +9,27 @@
 .dashboard-content {
     background-color: #F1F2F6;
     flex: 1;
-    padding: 30px;
+    padding: 20px;
     overflow-y: auto;
     margin-left: 280px;
     transition: margin-left 0.3s ease;
+}
+
+.welcome-text p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.welcome-text h2 {
+    font-size: 2rem;
+    color: #343a40;
 }
 
 /* Adjust margin when sidebar is collapsed or on small screens */
 @media (max-width: 992px) {
     .dashboard-content {
         margin-left: 60px; /* Adjusted for smaller screens */
-        padding: 20px;
+        padding: 15px;
     }
 }
 
