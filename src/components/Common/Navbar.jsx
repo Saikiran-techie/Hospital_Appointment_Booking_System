@@ -53,9 +53,9 @@ const NavigationBar = () => {
             </div>
             
             {/* Fixed Navbar */}
-            <Navbar expand="lg" variant="dark" className="custom-navbar fixed-top z-3">
+            <Navbar expand="lg" variant="dark" className="custom-navbar fixed-top">
                 <Container>
-                    <Navbar.Brand as={RouterLink} to="/" className="d-flex align-items-center gap-2">
+                    <Navbar.Brand as={RouterLink} to="/" className="d-flex align-items-center gap-1">
                         <img src={logoImg} alt="Hospital Logo" className="logo-img me-2" />
                         <span className="brand-name d-flex flex-column">
                             MediConnect <h4 className="mb-0 text-white">Hospital</h4>
@@ -64,7 +64,7 @@ const NavigationBar = () => {
 
                     {/* Hamburger Icon */}
                     <button
-                        className="d-lg-none btn p-0 border-0 bg-transparent"
+                        className="d-lg-none btn p-3 border-0 bg-transparent"
                         onClick={handleToggle}
                         aria-label="Toggle navigation menu"
                         type="button"

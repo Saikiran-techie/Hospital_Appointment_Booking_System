@@ -70,7 +70,7 @@
     padding-bottom: 2rem;
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
-    z-index: 1020;
+    z-index: 900;
     /* below navbar */
     transform: translateY(-120%);
     transition: transform 0.4s ease, opacity 0.3s ease;
