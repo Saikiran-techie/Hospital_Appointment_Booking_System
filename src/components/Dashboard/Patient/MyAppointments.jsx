@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './MyAppointments.css';
-import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaEye, FaSyncAlt, FaTrash, FaUpload, FaBan, FaClipboardCheck, FaCalendarTimes, FaClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaEye, FaSyncAlt, FaTrash, FaUpload, FaBan, FaClipboardCheck, FaCalendarTimes, FaClock, FaCheck } from 'react-icons/fa';
 import { Spinner, Modal, Button, Form } from 'react-bootstrap';
 import { useOutletContext } from 'react-router-dom';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import Swal from 'sweetalert2';
-import { doc, updateDoc, deleteDoc, addDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db, storage } from '../../../firebase/firebaseConfig'; // adjust your firebase import path
+import { toast } from 'react-toastify';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { doc, updateDoc, deleteDoc, addDoc, collection, query, where, getDocs, getDoc } from 'firebase/firestore';
+import { db, storage } from '../../../firebase/firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
 
-// import { useOutletContext } from 'react-router-dom';
-// import { getDocs, collection, query, where, updateDoc, doc } from 'firebase/firestore';
-
 function MyAppointments() {
-    // ✅ get data from PatientDashboard context
-    const { appointments = [], loadingAppointments, currentUser: contextUser, onViewAppointment } = useOutletContext();
+    const { appointments = [], loadingAppointments, currentUser: contextUser, onViewAppointment, doctors = [] } = useOutletContext();
     const auth = getAuth();
     const fallbackUser = auth.currentUser;
     const currentUser = contextUser || fallbackUser;
-
 
     const [selectedAppointment, setSelectedAppointment] = useState(null);
     const [rescheduleData, setRescheduleData] = useState({ date: '', time: '', consultationType: '' });
@@ -28,17 +26,157 @@ function MyAppointments() {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [uploadFile, setUploadFile] = useState(null);
     const [uploading, setUploading] = useState(false);
+    const [availableDates, setAvailableDates] = useState([]);
+    const [availableTimes, setAvailableTimes] = useState([]);
+    const [doctorAvailabilityText, setDoctorAvailabilityText] = useState('');
+    const selectedDoctorAvailabilityRef = useRef(null);
 
-
-    // const navigate = useNavigate();
-
-    // Removed automatic cancellation logic here
 
     const upcomingAppointments = appointments.filter(app => ['Confirmed', 'Scheduled'].includes(app.status));
     const completedAppointments = appointments.filter(app => app.status === 'Completed');
     const cancelledAppointments = appointments.filter(app => app.status === 'Cancelled');
     const pendingAppointments = appointments.filter(app => app.status === 'Pending');
 
+
+    // inside MyAppointments.jsx
+
+    const getDayName = (date) => date.toLocaleDateString('en-US', { weekday: 'long' });
+
+    const parseTime = (timeStr) => {
+        const [time, modifier] = timeStr.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+        if (modifier === 'PM' && hours < 12) hours += 12;
+        if (modifier === 'AM' && hours === 12) hours = 0;
+        return { hours, minutes };
+    };
+
+    const generateTimeIntervals = (startStr, endStr) => {
+        const start = parseTime(startStr);
+        const end = parseTime(endStr);
+
+        const slots = [];
+        let current = new Date();
+        current.setHours(start.hours, start.minutes, 0, 0);
+
+        const endTime = new Date();
+        endTime.setHours(end.hours, end.minutes, 0, 0);
+
+        while (current < endTime) {
+            const h = current.getHours();
+            const m = current.getMinutes();
+            const suffix = h >= 12 ? 'PM' : 'AM';
+            const hour = ((h + 11) % 12 + 1);
+            const formatted = `${hour}:${m.toString().padStart(2, '0')} ${suffix}`;
+            slots.push(formatted);
+            current.setMinutes(current.getMinutes() + 30);
+        }
+
+        return slots;
+    };
+
+    const orderedDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    const generateAvailabilityText = (availability) => {
+        const result = orderedDays.map(day => {
+            const slot = availability[day];
+            if (slot?.enabled && slot.start && slot.end) {
+                return `${day.slice(0, 3)}: ${slot.start} - ${slot.end}`;
+            }
+            return null;
+        }).filter(Boolean).join(' | ');
+
+        return result || 'No availability set.';
+    };
+
+    const generateDatesFromAvailability = (availability) => {
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + 30);
+
+        const dates = [];
+        let checkDate = new Date(today);
+
+        while (checkDate <= maxDate) {
+            const dayName = getDayName(checkDate);
+            if (availability[dayName]?.enabled) {
+                dates.push(new Date(checkDate));
+            }
+            checkDate.setDate(checkDate.getDate() + 1);
+        }
+
+        return dates;
+    };
+
+    const generateTimesForDate = (date, availability) => {
+        const dayName = getDayName(date);
+        const slot = availability[dayName];
+        if (!slot?.enabled || !slot.start || !slot.end) return [];
+        return generateTimeIntervals(slot.start, slot.end);
+    };
+
+    const handleDoctorAvailabilitySetup = async (doctorId) => {
+        try {
+            const docSnap = await getDoc(doc(db, 'doctors', doctorId));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const availability = data.availability || {};
+                selectedDoctorAvailabilityRef.current = availability;
+                setAvailableDates(generateDatesFromAvailability(availability));
+                setDoctorAvailabilityText(generateAvailabilityText(availability));
+                if (rescheduleData.date) {
+                    setAvailableTimes(generateTimesForDate(rescheduleData.date, availability));
+                }
+            }
+        } catch (err) {
+            console.error('Failed to fetch doctor:', err);
+        }
+    };
+
+    useEffect(() => {
+        if (selectedAppointment?.doctorId) {
+            handleDoctorAvailabilitySetup(selectedAppointment.doctorId);
+        }
+    }, [selectedAppointment]);
+
+    const handleDateChange = (date) => {
+        const availability = selectedDoctorAvailabilityRef.current;
+        setRescheduleData(prev => ({ ...prev, date, time: '' }));
+        if (availability) {
+            setAvailableTimes(generateTimesForDate(date, availability));
+        }
+    };
+
+    const handleRescheduleOpen = (app) => {
+        setSelectedAppointment(app);
+        setAvailableTimes([]);
+        setAvailableDates([]);
+        setDoctorAvailabilityText('');
+        setRescheduleData({
+            date: app.appointmentDate ? new Date(app.appointmentDate) : '',
+            time: app.appointmentTime || '',
+            consultationType: app.consultationType || '',
+        });
+        setShowRescheduleModal(true);
+    };
+
+    const handleRescheduleSubmit = async () => {
+        const { date, time, consultationType } = rescheduleData;
+        if (!date || !time || !consultationType) {
+            Swal.fire('Error', 'Please fill all fields.', 'error');
+            return;
+        }
+
+        await updateDoc(doc(db, 'appointments', selectedAppointment.id), {
+            appointmentDate: date.toISOString().split('T')[0],
+            appointmentTime: time,
+            consultationType,
+            status: 'Scheduled'
+        });
+
+        setSelectedAppointment(null);
+        setShowRescheduleModal(false);
+        toast.success('Appointment successfully rescheduled.');
+    };
 
     const sanitizeFileName = (name) => {
         return name
@@ -63,13 +201,6 @@ function MyAppointments() {
             Swal.fire('Error', 'User not authenticated.', 'error');
             return;
         }
-
-        // if (!currentUser) {
-        //     Swal.fire("Session Expired", "Please login again", "error");
-        //     navigate("/login");
-        //     return;
-        // }
-          
 
         const cleanFileName = sanitizeFileName(uploadFile.name);
         const filePath = `medicalReports/${selectedAppointment.id}/${cleanFileName}`;
@@ -169,35 +300,6 @@ function MyAppointments() {
         }
     };
 
-    const rescheduleAppointment = (app) => {
-        setSelectedAppointment(app);
-        setRescheduleData({
-            date: app.date ? new Date(app.date.seconds * 1000).toISOString().slice(0, 10) : '',
-            time: app.appointmentTime || '',
-            consultationType: app.consultationType || '',
-        });
-        setShowRescheduleModal(true);
-    };
-
-    const handleRescheduleSubmit = async () => {
-        const { date, time, consultationType } = rescheduleData;
-        if (!date || !time || !consultationType) {
-            Swal.fire('Error', 'Please fill all fields.', 'error');
-            return;
-        }
-
-        await updateDoc(doc(db, 'appointments', selectedAppointment.id), {
-            appointmentDate: date,
-            appointmentTime: time,
-            consultationType,
-            status: 'Scheduled' || 'Confirmed', // Reset status to Scheduled
-        });
-
-        setSelectedAppointment(null);
-        setShowRescheduleModal(false);
-        Swal.fire('Updated!', 'Appointment has been rescheduled.', 'success');
-    };
-
     const deleteAppointment = async (id) => {
         const result = await Swal.fire({
             title: 'Delete Appointment?',
@@ -291,7 +393,7 @@ function MyAppointments() {
                                         </OverlayTrigger>
 
                                         <OverlayTrigger placement="top" overlay={<Tooltip>Reschedule</Tooltip>}>
-                                            <button className="reschedule-btn" onClick={() => rescheduleAppointment(app)}>
+                                            <button className="reschedule-btn" onClick={() => handleRescheduleOpen(app)}>
                                                 <FaSyncAlt />
                                             </button>
                                         </OverlayTrigger>
@@ -365,7 +467,7 @@ function MyAppointments() {
                                     </OverlayTrigger>
 
                                     <OverlayTrigger placement="top" overlay={<Tooltip>Reschedule</Tooltip>}>
-                                        <button className="reschedule-btn" onClick={() => rescheduleAppointment(app)}>
+                                        <button className="reschedule-btn" onClick={() => handleRescheduleOpen(app)}>
                                             <FaSyncAlt />
                                         </button>
                                     </OverlayTrigger>
@@ -481,7 +583,7 @@ function MyAppointments() {
                                     </OverlayTrigger>
 
                                     <OverlayTrigger placement="top" overlay={<Tooltip>Reschedule</Tooltip>}>
-                                        <button className="reschedule-btn" onClick={() => rescheduleAppointment(app)}>
+                                        <button className="reschedule-btn" onClick={() => handleRescheduleOpen(app)}>
                                             <FaSyncAlt />
                                         </button>
                                     </OverlayTrigger>
@@ -498,40 +600,53 @@ function MyAppointments() {
                     <Modal.Title>Reschedule Appointment</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    {selectedAppointment && (
+                        <>
+                            <h6 className="mb-2 text-primary">Dr. {selectedAppointment.doctor} - {selectedAppointment.specialization}</h6>
+                            <div className="mb-2 text-success d-flex align-items-center gap-2">
+                                🗓️ Availability: {doctorAvailabilityText}
+                            </div>
+                        </>
+                    )}
+
                     <Form>
-                        <Form.Group controlId="rescheduleDate">
-                            <Form.Label>Date</Form.Label>
-                            <Form.Control
-                                type="date"
-                                value={rescheduleData.date}
-                                onChange={(e) => setRescheduleData(prev => ({ ...prev, date: e.target.value }))}
+                        <Form.Group>
+                            <Form.Label>Select New Date</Form.Label>
+                            <DatePicker
+                                selected={rescheduleData.date}
+                                onChange={handleDateChange}
+                                includeDates={availableDates}
+                                placeholderText="Select a date"
+                                dateFormat="EEEE, MMMM d, yyyy"
+                                className="form-control"
                             />
                         </Form.Group>
-                        <Form.Group controlId="rescheduleTime" className="mt-2">
-                            <Form.Label>Time</Form.Label>
-                            <Form.Control
-                                type="time"
+
+                        <Form.Group className="mt-3">
+                            <Form.Label>Select Time</Form.Label>
+                            <Form.Select
                                 value={rescheduleData.time}
-                                onChange={(e) => setRescheduleData(prev => ({ ...prev, time: e.target.value }))}
-                            />
+                                onChange={(e) => setRescheduleData(prev => ({ ...prev, time: e.target.value }))}>
+                                <option value="">Select time</option>
+                                {availableTimes.map(time => (
+                                    <option key={time} value={time}>{time}</option>
+                                ))}
+                            </Form.Select>
                         </Form.Group>
-                        <Form.Group controlId="rescheduleConsultationType" className="mt-2">
+
+                        <Form.Group className="mt-3">
                             <Form.Label>Consultation Type</Form.Label>
-                            <Form.Control
-                                as="select"
+                            <Form.Select
                                 value={rescheduleData.consultationType}
-                                onChange={(e) => setRescheduleData(prev => ({ ...prev, consultationType: e.target.value }))}
-                            >
+                                onChange={(e) => setRescheduleData(prev => ({ ...prev, consultationType: e.target.value }))}>
                                 <option value="">Select</option>
                                 <option value="In-Person">In-Person</option>
                                 <option value="Vedio-Call">Vedio-Call</option>
-                                <option value="Home Visit">Home Visit</option>
-                            </Form.Control>
+                            </Form.Select>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    {/* <Button variant="secondary" onClick={() => setShowRescheduleModal(false)}>Close</Button> */}
                     <Button variant="primary" onClick={handleRescheduleSubmit}>Save Changes</Button>
                 </Modal.Footer>
             </Modal>

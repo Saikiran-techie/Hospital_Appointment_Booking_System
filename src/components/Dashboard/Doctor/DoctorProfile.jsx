@@ -203,7 +203,7 @@ const DoctorProfile = ({ doctorProfile, onProfilePhotoUpdate }) => {
     return (
         <div className="profile-container">
             <div className="profile-card">
-                <h2>Doctor Profile</h2>
+                <h3 className="text-center">Doctor Profile</h3>
 
                 <div className="profile-image-container">
                     <button

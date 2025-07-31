@@ -10,7 +10,6 @@ import './BookAppointment.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-
 export function generatePatientCode(length = 8) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -20,7 +19,7 @@ export function generatePatientCode(length = 8) {
     return result;
 }
 
-const dayOrder = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const dayOrder = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const BookAppointment = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +59,11 @@ const BookAppointment = () => {
                     const parsed = JSON.parse(saved);
                     setFormData(parsed);
                     const selectedDoc = doctorList.find(d => d.id === parsed.doctor);
-                    if (selectedDoc) setSelectedSpecialization(selectedDoc.specialization);
+                    if (selectedDoc) {
+                        setSelectedSpecialization(selectedDoc.specialization);
+                        setSelectedDoctorAvailability(formatAvailabilityText(selectedDoc.availability));
+                        calculateAvailableDatesAndTimes(selectedDoc);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching doctors:', error);
@@ -78,23 +81,16 @@ const BookAppointment = () => {
     const formatAvailabilityText = (availabilityObj) => {
         if (typeof availabilityObj !== 'object' || availabilityObj === null) return 'No availability set';
 
-        const orderedDays = [
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-        ];
-
-        const slots = orderedDays
+        const slots = dayOrder
             .filter((day) => availabilityObj[day]?.enabled)
             .map((day) => {
                 const { start, end } = availabilityObj[day];
-                const startFormatted = start ? formatTime(start) : '';
-                const endFormatted = end ? formatTime(end) : '';
-                return `${day.slice(0, 3)}: ${startFormatted} - ${endFormatted}`;
+                return `${day.slice(0, 3)}: ${formatTime(start)} - ${formatTime(end)}`;
             });
 
         return slots.length > 0 ? slots.join(' | ') : 'No availability set';
     };
 
-    // Helper to format 24h time to 12h with AM/PM
     const formatTime = (timeStr) => {
         const [hour, minute] = timeStr.split(':');
         const h = parseInt(hour, 10);
@@ -103,26 +99,23 @@ const BookAppointment = () => {
         return `${formattedHour}:${minute} ${period}`;
     };
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
         if (name === 'doctor') {
-            const selectedDoctor = doctors.find((doc) => doc.id === e.target.value);
-
+            const selectedDoctor = doctors.find((doc) => doc.id === value);
             if (selectedDoctor) {
                 setSelectedSpecialization(selectedDoctor.specialization);
                 const formattedAvailability = formatAvailabilityText(selectedDoctor.availability);
                 setSelectedDoctorAvailability(formattedAvailability);
-                setFormData(prev => ({ ...prev, doctor: value, specialization: selectedDoctor.specialization }));
+                setFormData(prev => ({
+                    ...prev,
+                    doctor: value,
+                    specialization: selectedDoctor.specialization
+                }));
                 calculateAvailableDatesAndTimes(selectedDoctor);
             }
-        }
-
-        if (name === 'appointmentDate') {
-            const selectedDoc = doctors.find(d => d.id === formData.doctor);
-            if (selectedDoc) calculateAvailableDatesAndTimes(selectedDoc, value);
         }
     };
 
@@ -136,33 +129,28 @@ const BookAppointment = () => {
         }
 
         const today = new Date();
-        const next7Days = [];
+        const validDates = [];
 
-        for (let i = 0; i < 14; i++) {
+        for (let i = 0; i < 30; i++) {
             const date = new Date();
             date.setDate(today.getDate() + i);
-            const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
-
-            const dayAvailability = availability[dayOfWeek];
-            if (dayAvailability && dayAvailability.enabled) {
-                const formattedDate = date.toISOString().split('T')[0];
-                next7Days.push(formattedDate);
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+            if (availability[dayName]?.enabled) {
+                validDates.push(date.toISOString().split('T')[0]);
             }
         }
 
-        setAvailableDates(next7Days);
+        setAvailableDates(validDates);
 
-        // If user has selected a date, update times
         if (selectedDate) {
             const date = new Date(selectedDate);
-            const day = date.toLocaleString('en-US', { weekday: 'long' });
-            const dayAvailability = availability[day];
-
-            if (!dayAvailability || !dayAvailability.enabled) {
-                setAvailableTimes([]);
-            } else {
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+            const dayAvailability = availability[dayName];
+            if (dayAvailability && dayAvailability.enabled) {
                 const slots = generateTimeSlots(dayAvailability.start, dayAvailability.end);
                 setAvailableTimes(slots);
+            } else {
+                setAvailableTimes([]);
             }
         }
     };
@@ -206,16 +194,17 @@ const BookAppointment = () => {
             const patientCode = generatePatientCode();
             const appointmentData = {
                 ...formData,
-                doctor: selectedDoctor.fullName,
+                doctor: selectedDoctor.fullName || selectedDoctor.name,
+                doctorId: selectedDoctor.id,
+                specialization: selectedDoctor.specialization,
                 patientCode,
                 bookedBy: user.uid,
-                doctorId: selectedDoctor.id,
                 status: 'Pending Payment',
                 createdAt: serverTimestamp(),
             };
 
             const docRef = await addDoc(collection(db, 'appointments'), appointmentData);
-            sessionStorage.setItem('appointmentFormData', JSON.stringify(formData));
+            sessionStorage.setItem('appointmentFormData', JSON.stringify(appointmentData));
             navigate('/patient/bookAppointment/PaymentPage', {
                 state: { consultationType: formData.consultationType, appointmentId: docRef.id },
             });

@@ -224,9 +224,11 @@ function AppointmentDetails() {
               <hr />
               <p><strong>Name:</strong> {appointmentData.fullName} ({appointmentData.patientCode})</p>
               <p><strong>Gender:</strong> {appointmentData.gender}</p>
-              <p><strong>Date of Birth:</strong> {appointmentData.dob}</p>
               <p><strong>Age:</strong> {appointmentData.age}</p>
               <p><strong>Blood Group:</strong> {appointmentData.bloodGroup}</p>
+              <p><strong>Contact:</strong> {appointmentData.phone}</p>
+              <p><strong>Email:</strong> {appointmentData.email}</p>
+              <p><strong>Address:</strong> {appointmentData.address}</p>
             </Card.Body>
           </Card>
         </Col>

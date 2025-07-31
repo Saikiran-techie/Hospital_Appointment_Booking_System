@@ -150,6 +150,10 @@ function PatientDetails() {
         }
     };
 
+    const canUploadPrescription = (status) => {
+        return ['Pending', 'Scheduled', 'Confirmed'].includes(status);
+    };
+
     const handleDownload = (fileURL) => window.open(fileURL, '_blank');
 
     const handleStatusUpdate = async (newStatus) => {
@@ -397,9 +401,9 @@ function PatientDetails() {
 
                             <Button
                                 variant="primary"
-                                className="rounded-pill shadow-sm px-4"
+                                className="rounded-pill shadow-sm px-4 mt-2"
                                 onClick={handlePrescriptionSubmit}
-                                disabled={uploadingPrescription}
+                                disabled={uploadingPrescription || !canUploadPrescription(appointment.status)}
                             >
                                 {uploadingPrescription ? <Spinner as="span" animation="border" size="sm" /> : '📤 Upload Prescription'}
                             </Button>
