@@ -42,12 +42,12 @@ const NavigationBar = () => {
                     ))}
                 </Nav>
 
-                <div className="mt-4 d-flex flex-column gap-3 px-4">
+                <div className="mt-4 d-flex flex-column gap-3 px-4 text-center">
                     <RouterLink to="/signup" onClick={handleClose}>
-                        <Button variant="outline-light" className="rounded-pill w-100">Sign Up</Button>
+                        <Button variant="outline-light" className="rounded-pill w-50">Sign Up</Button>
                     </RouterLink>
                     <RouterLink to="/login" onClick={handleClose}>
-                        <Button variant="light" className="rounded-pill w-100">Login</Button>
+                        <Button variant="light" className="rounded-pill w-50">Login</Button>
                     </RouterLink>
                 </div>
             </div>

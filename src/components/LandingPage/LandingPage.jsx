@@ -5,7 +5,9 @@ import OurServices from "./OurServices";
 import Doctors from "./Doctors";
 import Testimonials from "./Testimonials";
 import AboutUs from "./AboutUs";
+import Faq from "./Faq";
 import ContactUs from "./ContactUs";
+import Map from "./Map";
 import Footer from "./Footer";
 
 const LandingPage = () => {
@@ -17,7 +19,9 @@ const LandingPage = () => {
             <section id="doctors"><Doctors /></section>
             <section id="testimonials"><Testimonials /></section>
             <section id="about"><AboutUs /></section>
+            <section id="faq"><Faq /></section>
             <section id="contact"><ContactUs /></section>
+            <section id="map"><Map/></section>
             <Footer />
         </div>
     );

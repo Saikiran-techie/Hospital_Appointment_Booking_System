@@ -152,7 +152,7 @@
 }
 
 /* Responsive Adjustments */
-@media (max-width: 768px) {
+@media (max-width: 884px) {
     .custom-navbar {
         height: 83px;
         flex-direction: row;

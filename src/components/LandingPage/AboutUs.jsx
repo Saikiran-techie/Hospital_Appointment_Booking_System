@@ -1,5 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { FaHospitalAlt, FaUserMd, FaSmile, FaProcedures } from "react-icons/fa";
+import CountUp from "react-countup";
 import aboutImage from "../../assets/about-us.jpg";
 import "../LandingPage/LandingPage.css";
 
@@ -13,6 +15,7 @@ const AboutUs = () => (
                 <ImageColumn />
                 <TextColumn />
             </Row>
+            <Stats />
         </Container>
     </div>
 );
@@ -43,6 +46,30 @@ const TextColumn = () => (
             Discover compassionate care, reliable expertise, and a team dedicated to putting your health first — every time you walk through our doors.
         </p>
     </Col>
+);
+
+// Stats Data
+const stats = [
+    { icon: <FaHospitalAlt size={40} className="text-primary mb-2" />, end: 20, suffix: "+", label: "Years of Experience" },
+    { icon: <FaUserMd size={40} className="text-success mb-2" />, end: 50, suffix: "+", label: "Specialists" },
+    { icon: <FaSmile size={40} className="text-info mb-2" />, end: 10000, suffix: "+", label: "Happy Patients" },
+    { icon: <FaProcedures size={40} className="text-danger mb-2" />, end: 100, suffix: "+", label: "Surgeries / Month" },
+];
+
+const Stats = () => (
+    <Row className="mt-5 text-center g-4">
+        {stats.map((stat, idx) => (
+            <Col xs={6} md={3} key={idx} data-aos="fade-up" data-aos-delay={idx * 100}>
+                <div className="stat-card p-3 rounded bg-light shadow-sm h-100">
+                    <div>{stat.icon}</div>
+                    <h4 className="mt-2">
+                        <CountUp end={stat.end} duration={2} suffix={stat.suffix} />
+                    </h4>
+                    <p className="mb-0">{stat.label}</p>
+                </div>
+            </Col>
+        ))}
+    </Row>
 );
 
 export default AboutUs;

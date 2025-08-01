@@ -363,7 +363,7 @@ function MyAppointments() {
                             upcomingAppointments.map(app => (
                                 <div key={app.id} className="appointments-card">
                                     <div className="appointment-info">
-                                        <h6>Dr. {app.doctor}</h6>
+                                        <h6 className="mb-2 text-primary">Dr. {app.doctor}</h6>
                                         <p>{app.specialization}</p>
                                         <p><strong>Appointment Date & Time:</strong>
                                             {app.appointmentDate && app.appointmentTime
@@ -444,7 +444,7 @@ function MyAppointments() {
                         pendingAppointments.map(app => (
                             <div key={app.id} className="appointments-card">
                                 <div className="appointment-info">
-                                    <h6>Dr. {app.doctor}</h6>
+                                    <h6 className="mb-2 text-primary">Dr. {app.doctor}</h6>
                                     <p>{app.specialization}</p>
                                     <p><strong>Appointment Date & Time:</strong>
                                         {app.appointmentDate && app.appointmentTime
@@ -506,7 +506,7 @@ function MyAppointments() {
                         completedAppointments.map(app => (
                             <div key={app.id} className="appointments-card">
                                 <div className="appointment-info">
-                                    <h6>Dr. {app.doctor}</h6>
+                                    <h6 className="mb-2 text-primary">Dr. {app.doctor}</h6>
                                     <p>{app.specialization}</p>
                                     {/* <p><strong>Appointment Date & Time:</strong>
                                     {app.appointmentDate && app.appointmentTime
@@ -555,7 +555,7 @@ function MyAppointments() {
                         cancelledAppointments.map(app => (
                             <div key={app.id} className="appointments-card">
                                 <div className="appointment-info">
-                                    <h6>Dr. {app.doctor}</h6>
+                                    <h6 className="mb-2 text-primary">Dr. {app.doctor}</h6>
                                     <p>{app.specialization}</p>
                                     <p><strong>Appointment Date & Time:</strong>
                                         {app.appointmentDate && app.appointmentTime

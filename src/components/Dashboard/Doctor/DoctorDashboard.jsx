@@ -64,7 +64,10 @@ const DoctorDashboard = () => {
 
     return (
         <>
-            <h2>Welcome, Dr. {userData.name}</h2>
+            {/* <h2>Welcome, Dr. {userData.name}</h2> */}
+            <h2 className="fw-bold mb-3">
+                    👋 Welcome, {userData?.name || 'Guest'}!
+                </h2>
             <p>Manage your practice efficiently with your personal dashboard.</p>
             <p className="text-muted">
                 Here’s a quick overview of your appointments, patients, and schedules. You can manage your appointments, view patient details, and check your schedule from this dashboard.

@@ -21,6 +21,10 @@ const Home = () => {
                             Providing world-class medical care and healthcare solutions, 24/7.
                             Our mission is your well-being.
                         </p>
+                        <p className="lead">
+                            🕒 Open 24/7 for emergencies.<br />
+                            🏥 Regular outpatient timings: <strong>Mon–Sat, 8:00 AM – 8:00 PM</strong>
+                        </p>
                     </Col>
 
                     {/* Image Second */}

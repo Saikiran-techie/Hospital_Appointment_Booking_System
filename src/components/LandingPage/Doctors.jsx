@@ -16,7 +16,7 @@ const Doctors = () => (
         <h2 className="text-center mt-5 mb-4">Meet Our Doctors</h2>
         <Row className="g-4">
             {doctors.map((doctor) => (
-                <Col md={3} key={doctor.id}>
+                <Col xs={12} sm={6} md={6} lg={3} key={doctor.id}>
                     <DoctorCard {...doctor} />
                 </Col>
             ))}
@@ -25,7 +25,7 @@ const Doctors = () => (
 );
 
 const DoctorCard = ({ id, name, specialisation, img, availability }) => (
-    <Card className="doctor-card text-center" data-aos="fade-up">
+    <Card className="doctor-card d-flex column-direction text-center" data-aos="fade-up">
         <div className="position-relative">
             <Card.Img
                 variant="top"
@@ -38,7 +38,6 @@ const DoctorCard = ({ id, name, specialisation, img, availability }) => (
             <Card.Title>{name}</Card.Title>
             <Card.Text>{specialisation}</Card.Text>
             <Card.Text>{availability}</Card.Text>
-
             <Link to={`/doctor/${id}`}>
                 <Button className="view-button">View</Button>
             </Link>
@@ -51,6 +50,7 @@ DoctorCard.propTypes = {
     name: PropTypes.string.isRequired,
     specialisation: PropTypes.string.isRequired,
     img: PropTypes.string.isRequired,
+    availability: PropTypes.string.isRequired,
 };
 
 export default Doctors;

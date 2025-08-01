@@ -1,10 +1,27 @@
 
 .hero-section {
+    position: relative;
+    background: linear-gradient(to right, #d8e0f8, #cff0fa);
+    /* url("../../assets/HomeBgImage.jpg") center/cover no-repeat; */
     min-height: 90vh;
-    background: linear-gradient(to right, #f0f4ff, #e0f7ff);
-    /* background-image:url("../hospital-frontend/src/assets/HomeBackgroundImage.jpg"); */
     padding: 4rem 0;
+    z-index: 1;
+    overflow: hidden;
 }
+
+/* 🔷 Add this to apply the opaque overlay */
+/* .hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(165, 163, 163, 0.3); */
+    /* background-color: rgba(0, 0, 0, 0.4); dark overlay */
+    /* white overlay at 75% opacity */
+    /* z-index: -1;
+} */
 
 .text-primary {
     color: #2563eb !important;
@@ -17,7 +34,7 @@
 
 .hero-section p {
     font-size: 1.25rem;
-    color: #333;
+    color: #000000;
 }
 
 .hero-img {
@@ -196,7 +213,6 @@
     margin-bottom: 20px;
 }
 
-
 /* About Doctors Section */
 
 .about-doctor-container {
@@ -313,6 +329,26 @@
     animation: slideInRight 1s ease forwards;
 }
 
+/* Stats Section in About*/
+.stat-card {
+    background: #f9fafe;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background-color: #f8fafc;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* FAQ Section */
+.faq-section button {
+    font-weight: 600;
+    border-radius: 8px;
+}
+
 /* Contact Section */
 .contact-section {
     background: #f8f9fa;
@@ -376,6 +412,23 @@
     margin-bottom: 15px;
 }
 
+/* Map Section */
+.map-responsive {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 30%;
+    height: 0;
+}
+
+.map-responsive iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
 /* Footer Section */
 .custom-footer {
     background: linear-gradient(135deg, #0d6efd, #003366);
@@ -427,7 +480,7 @@
 
 /* Copyright text */
 .copyright-text {
-    font-size: 1.05rem;
+    font-size: 0.8rem;
     color: #f8f9fa;
 }
 
@@ -461,3 +514,9 @@
     transform: scale(1.1);
     outline: none;
 }
+
+
+
+
+
+
