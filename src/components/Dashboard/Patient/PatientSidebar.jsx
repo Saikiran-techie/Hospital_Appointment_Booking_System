@@ -1,9 +1,10 @@
+// ✅ Updated PatientSidebar.jsx with Help & Support
 import React, { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import {
     FaHome, FaCalendarAlt, FaNotesMedical, FaFileMedical,
-    FaPills, FaUser, FaBars, FaTimes, FaSignOutAlt
+    FaPills, FaUser, FaBars, FaTimes, FaSignOutAlt, FaQuestionCircle
 } from 'react-icons/fa';
 import './PatientSidebar.css';
 import logoImg from '../../../assets/brand-logo.png';
@@ -27,7 +28,6 @@ const PatientSidebar = ({ isOpen, toggleSidebar }) => {
         if (isMobile) toggleSidebar(false);
     };
 
-    // Logout logic for both sidebars
     const handleLogout = () => {
         signOut(auth)
             .then(() => {
@@ -52,14 +52,12 @@ const PatientSidebar = ({ isOpen, toggleSidebar }) => {
                         <NavLink to="myAppointments" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaNotesMedical /></NavLink>
                         <NavLink to="medical-reports" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaFileMedical /></NavLink>
                         <NavLink to="prescriptions" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaPills /></NavLink>
+                        <NavLink to="payment-history" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaFileMedical /></NavLink>
                         <NavLink to="userprofile" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaUser /></NavLink>
+                        <NavLink to="helpsupport" className={({ isActive }) => `nav-icon ${isActive ? "active-icon" : ""}`}><FaQuestionCircle /></NavLink>
                     </div>
                     <div className="mini-sidebar-icons mt-auto">
-                        <button
-                            className="logout-icon-modern"
-                            onClick={handleLogout}
-                            title="Logout"
-                        >
+                        <button className="logout-icon-modern" onClick={handleLogout} title="Logout">
                             <FaSignOutAlt />
                         </button>
                     </div>
@@ -85,14 +83,13 @@ const PatientSidebar = ({ isOpen, toggleSidebar }) => {
                         <NavLink to="myAppointments" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaNotesMedical /> My Appointments</NavLink>
                         <NavLink to="medical-reports" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaFileMedical /> Medical Reports</NavLink>
                         <NavLink to="prescriptions" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaPills /> Prescriptions</NavLink>
+                        <NavLink to="payment-history" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaFileMedical /> Payment History</NavLink>
                         <NavLink to="userprofile" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaUser /> Profile</NavLink>
+                        <NavLink to="helpsupport" onClick={handleLargeSidebarNavClick} className={({ isActive }) => `nav-link ${isActive ? "active-link" : ""}`}><FaQuestionCircle /> Help & Support</NavLink>
                     </Nav>
 
                     <div className="sidebar-logout-modern">
-                        <button
-                            className="logout-btn-modern"
-                            onClick={handleLogout}
-                        >
+                        <button className="logout-btn-modern" onClick={handleLogout}>
                             <FaSignOutAlt className="me-2" /> Logout
                         </button>
                     </div>

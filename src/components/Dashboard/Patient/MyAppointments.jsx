@@ -317,7 +317,7 @@ function MyAppointments() {
 
     return (
         <div className="appointments-container">
-            <h3 className='section-heading'>My Appointments</h3>
+            <h3 className='section-heading text-primary'>My Appointments</h3>
             <br />
 
             {/* Summary Cards */}

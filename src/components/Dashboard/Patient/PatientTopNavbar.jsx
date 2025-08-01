@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Navbar, Nav, Container, Dropdown, Image } from 'react-bootstrap';
-import { FaUserCircle, FaTimes } from 'react-icons/fa';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+    Navbar, Nav, Container, Dropdown, Image, Popover, Overlay, Badge
+} from 'react-bootstrap';
+import {
+    FaUserCircle, FaTimes, FaBell
+} from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../../firebase/firebaseConfig';
 import { getUserDetails } from '../../../services/userService';
@@ -10,29 +14,43 @@ const PatientTopNavbar = () => {
     const navigate = useNavigate();
     const [userProfile, setUserProfile] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const bellRef = useRef(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             const currentUser = auth.currentUser;
             if (currentUser) {
                 const profileData = await getUserDetails(currentUser.uid);
-
                 const displayName =
                     profileData?.fullName ||
                     profileData?.name ||
                     currentUser.displayName ||
                     'User';
-
                 setUserProfile({
-                    displayName: displayName,
+                    displayName,
                     email: currentUser.email,
                     profilePhoto: profileData?.photoURL || currentUser.photoURL,
                     ...profileData,
                 });
             }
         };
+
+        const fetchNotifications = async () => {
+            const sample = [
+                { id: 1, message: "Appointment confirmed with Dr. Sharma", time: "2 hours ago" },
+                { id: 2, message: "Prescription updated by Dr. Rao", time: "Yesterday" },
+                { id: 3, message: "New report uploaded for your blood test", time: "3 days ago" }
+            ];
+            setNotifications(sample);
+        };
+
         fetchProfile();
+        fetchNotifications();
     }, []);
+
+    const unreadCount = notifications.length;
 
     return (
         <>
@@ -43,16 +61,12 @@ const PatientTopNavbar = () => {
                         role="button"
                         tabIndex={0}
                         onClick={() => setShowDropdown(false)}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                setShowDropdown(false);
-                            }
-                        }}
-                    ></div>
+                        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setShowDropdown(false)}
+                    />
                 )}
 
                 <Navbar expand="lg" className="top-navbar shadow-sm">
-                    <Container fluid>
+                    <Container fluid className="d-flex justify-content-between align-items-center flex-wrap">
                         <Navbar.Brand className="fw-bold text-dark d-flex align-items-center gap-2">
                             <span className="navbar-title">
                                 {userProfile?.displayName
@@ -61,26 +75,64 @@ const PatientTopNavbar = () => {
                             </span>
                         </Navbar.Brand>
 
-                        <Nav className="ms-auto align-items-center gap-3">
-                            <Dropdown
-                                align="end"
-                                show={showDropdown}
-                                onToggle={(isOpen) => setShowDropdown(isOpen)}
+                        <Nav className="ms-auto align-items-center gap-4 d-flex flex-row">
+                            {/* 🔔 Notification Bell Icon */}
+                            <div
+                                className="position-relative notification-bell bell-animated"
+                                role="button"
+                                tabIndex={0}
+                                ref={bellRef}
+                                onClick={() => setShowNotifications(!showNotifications)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') setShowNotifications(!showNotifications);
+                                }}
+                                style={{ cursor: 'pointer' }}
                             >
-                                <Dropdown.Toggle
-                                    variant="transparent"
-                                    id="dropdown-profile"
-                                    className="border-0 p-0"
-                                >
+                                <FaBell size={22} />
+                                {unreadCount > 0 && (
+                                    <Badge bg="danger" pill className="position-absolute top-0 start-100 translate-middle">
+                                        {unreadCount}
+                                    </Badge>
+                                )}
+                            </div>
+
+                            <Overlay
+                                show={showNotifications}
+                                target={bellRef.current}
+                                placement="bottom-end"
+                                containerPadding={20}
+                                rootClose
+                                onHide={() => setShowNotifications(false)}
+                            >
+                                <Popover id="notification-popover" style={{ minWidth: '320px', maxWidth: '90vw' }}>
+                                    <Popover.Header as="h3"><FaBell className="me-2" /> Notifications</Popover.Header>
+                                    <Popover.Body>
+                                        {notifications.length > 0 ? (
+                                            <ul className="list-group list-group-flush">
+                                                {notifications.map((n) => (
+                                                    <li key={n.id} className="list-group-item d-flex justify-content-between align-items-start">
+                                                        <div className="ms-2 me-auto">
+                                                            <div className="fw-semibold">{n.message}</div>
+                                                            <small className="text-muted">{n.time}</small>
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <p className="text-muted text-center">No new notifications.</p>
+                                        )}
+                                    </Popover.Body>
+                                </Popover>
+                            </Overlay>
+
+                            {/* 👤 Profile Dropdown */}
+                            <Dropdown align="end" show={showDropdown} onToggle={(isOpen) => setShowDropdown(isOpen)}>
+                                <Dropdown.Toggle variant="transparent" id="dropdown-profile" className="border-0 p-0">
                                     {userProfile?.profilePhoto ? (
                                         <Image
                                             src={userProfile.profilePhoto}
                                             roundedCircle
-                                            style={{
-                                                width: '42px',
-                                                height: '42px',
-                                                objectFit: 'cover',
-                                            }}
+                                            style={{ width: '42px', height: '42px', objectFit: 'cover' }}
                                         />
                                     ) : (
                                         <FaUserCircle size={42} />
@@ -105,11 +157,7 @@ const PatientTopNavbar = () => {
                                             <Image
                                                 src={userProfile.profilePhoto}
                                                 roundedCircle
-                                                style={{
-                                                    width: '80px',
-                                                    height: '80px',
-                                                    objectFit: 'cover',
-                                                }}
+                                                style={{ width: '80px', height: '80px', objectFit: 'cover' }}
                                             />
                                         ) : (
                                             <FaUserCircle size={80} className="text-secondary" />
@@ -126,13 +174,10 @@ const PatientTopNavbar = () => {
                                     <p><strong>Address:</strong> {userProfile?.address || 'N/A'}</p>
 
                                     <div className="d-flex justify-content-center">
-                                        <button
-                                            className="btn btn-primary mt-2"
-                                            onClick={() => {
-                                                setShowDropdown(false);
-                                                navigate('userProfile');
-                                            }}
-                                        >
+                                        <button className="btn btn-primary mt-2" onClick={() => {
+                                            setShowDropdown(false);
+                                            navigate('userProfile');
+                                        }}>
                                             Edit Profile
                                         </button>
                                     </div>

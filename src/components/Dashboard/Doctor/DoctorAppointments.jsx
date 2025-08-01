@@ -101,7 +101,7 @@ function DoctorAppointments() {
 
     return (
         <div className="appointments-page">
-            <h3 className="page-title">My Appointments</h3>
+            <h3 className="page-title text-primary">My Appointments</h3>
 
             <div className="appointments-header">
                 <div className="search-input-wrapper">

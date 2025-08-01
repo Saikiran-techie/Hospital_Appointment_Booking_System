@@ -19,7 +19,7 @@
     gap: 16px;
     font-size: 22px;
     font-weight: bold;
-    margin-bottom: 30px;
+    margin-bottom: 16px;
 }
 
 .sidebar-header img {
@@ -108,7 +108,7 @@
 /* Modern large sidebar logout button */
 .sidebar-logout-modern {
     margin-top: auto;
-    padding: 1rem;
+    padding: 8px 0;
 }
 
 .logout-btn-modern {

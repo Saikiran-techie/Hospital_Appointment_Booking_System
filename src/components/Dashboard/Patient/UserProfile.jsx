@@ -127,7 +127,7 @@ const UserProfile = ({ onProfilePhotoUpdate }) => {
     return (
         <div className="profile-container">
             <div className="profile-card">
-                <h3>My Profile</h3>
+                <h3 className='text-primary'>My Profile</h3>
 
                 <div className="profile-image-container">
                     <button

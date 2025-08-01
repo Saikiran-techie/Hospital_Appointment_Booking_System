@@ -1,13 +1,18 @@
 /* Top Navbar Styles */
 .top-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     background: linear-gradient(to right, #50c9c3, #0f9b8e);
     color: white;
-    padding: 10px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 8px;
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .top-navbar .navbar-brand {
@@ -23,6 +28,65 @@
     word-break: break-word;
     max-width: 65vw;
     font-size: 18px;
+}
+
+/* Notification-bell */
+.notification-bell {
+    position: relative;
+    font-size: 1.2rem;
+}
+
+.notification-bell .badge {
+    font-size: 0.65rem;
+    padding: 0.3em 0.5em;
+}
+
+.notification-bell:hover svg {
+    animation: ring 0.5s ease-in-out;
+}
+
+@keyframes ring {
+    0% {
+        transform: rotate(0);
+    }
+
+    25% {
+        transform: rotate(10deg);
+    }
+
+    50% {
+        transform: rotate(-10deg);
+    }
+
+    75% {
+        transform: rotate(6deg);
+    }
+
+    100% {
+        transform: rotate(0);
+    }
+}
+
+@media screen and (max-width: 440px) {
+    .top-navbar .navbar-brand {
+        flex: 1 1 100%;
+        margin-bottom: 0.25rem;
+    }
+
+    .top-navbar .navbar-title {
+        font-size: 1rem;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    .top-navbar .navbar-nav {
+        flex-wrap: nowrap !important;
+        gap: 1rem;
+    }
+
+    .top-navbar .notification-bell {
+        margin-left: auto;
+    }
 }
 
 /* Dropdown menu styling */

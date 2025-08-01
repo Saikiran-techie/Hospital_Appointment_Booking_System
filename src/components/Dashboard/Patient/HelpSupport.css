@@ -1,0 +1,26 @@
+.help-support-container {
+    background-color: #f8f9fa;
+}
+
+.support-card {
+    border-left: 5px solid #0d6efd !important;
+    transition: transform 0.2s ease-in-out;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.support-card:hover {
+    transform: translateY(-5px);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #e7f1ff;
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.accordion-button::after {
+    color: #0d6efd;
+}

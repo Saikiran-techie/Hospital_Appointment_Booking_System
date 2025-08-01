@@ -21,7 +21,9 @@ import MyAppointments from "./components/Dashboard/Patient/MyAppointments";
 import AppointmentDetails from "./components/Dashboard/Patient/AppointmentDetails";
 import PatientMedicalReports from "./components/Dashboard/Patient/PatientMedicalReports";
 import PatientPrescription from "./components/Dashboard/Patient/PatientPrescription";
+import PaymentHistory from "./components/Dashboard/Patient/PaymentHistory";
 import UserProfile from "./components/Dashboard/Patient/UserProfile";
+import HelpSupport from "./components/Dashboard/Patient/HelpSupport";
 
 // Doctor Components
 import DoctorDashboardLayout from './components/Dashboard/Doctor/DoctorDashboardLayout';
@@ -61,7 +63,9 @@ const App = () => {
           <Route path="myAppointments/:id" element={<AppointmentDetails />} />
           <Route path="medical-reports" element={<PatientMedicalReports />} />
           <Route path="prescriptions" element={<PatientPrescription />} />
+          <Route path="payment-history" element={<PaymentHistory />} />
           <Route path="userprofile" element={<UserProfile />} />
+          <Route path="helpsupport" element={<HelpSupport />} />
         </Route>
 
         {/* Doctor Routes */}

@@ -70,7 +70,7 @@ function DoctorPatients() {
 
     return (
         <div className="patients-page">
-            <h3 className="page-title">Consulted Patients</h3>
+            <h3 className="page-title text-primary">Consulted Patients</h3>
 
             <div className="patients-header">
                 <div className="search-input-wrapper">

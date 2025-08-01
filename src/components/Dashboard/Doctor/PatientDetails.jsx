@@ -198,7 +198,7 @@ function PatientDetails() {
 
     return (
         <div className="container my-4">
-            <h2 className="mb-4 text-center" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
+            <h2 className="mb-4 text-center text-primary" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
                 Patient Details
             </h2>
 

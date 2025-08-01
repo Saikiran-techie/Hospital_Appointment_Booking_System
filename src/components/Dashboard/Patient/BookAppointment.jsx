@@ -219,7 +219,7 @@ const BookAppointment = () => {
     return (
         <div className="appointment-wrapper">
             <Card className="p-4 shadow appointment-card">
-                <h2 className="text-center mb-5">Hospital Appointment Booking</h2>
+                <h2 className="text-center text-primary mb-5">Hospital Appointment Booking</h2>
                 <Form onSubmit={handleSubmit}>
                     <h5>Patient Details</h5>
                     <Row className="mb-3">

@@ -9,7 +9,7 @@
 .dashboard-content {
     background-color: #F1F2F6;
     flex: 1;
-    padding: 20px;
+    padding: 20px 15px;
     overflow-y: auto;
     margin-left: 280px;
     transition: margin-left 0.3s ease;

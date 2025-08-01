@@ -1,0 +1,38 @@
+.payment-table-wrapper {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+}
+
+.payment-table th,
+.payment-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.sort-dropdown .dropdown-menu {
+    min-width: 160px;
+    margin-top: 100px !important;
+    z-index: 1050 !important;
+    /* Ensure it's above any scroll container */
+    position: absolute !important;
+}
+
+.payment-controls {
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .payment-controls {
+        flex-direction: column;
+    }
+
+    .payment-controls .dropdown-toggle,
+    .payment-controls .form-control {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}

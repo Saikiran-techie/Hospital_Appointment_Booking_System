@@ -194,7 +194,7 @@ function AppointmentDetails() {
 
   return (
     <div className="container my-4">
-      <h3 className="mb-4 text-center" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
+      <h3 className="mb-4 text-center text-primary" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>
         Appointment Details
       </h3>
 

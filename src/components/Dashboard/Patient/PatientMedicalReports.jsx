@@ -231,7 +231,7 @@ function PatientMedicalReports() {
 
     return (
         <div className="medical-reports-container">
-            <h2 className="mb-4 text-center" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Medical Reports</h2>
+            <h3 className="mb-4 text-center text-primary" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}>Medical Reports</h3>
             {/* Top Controls */}
             <div className="top-controls mb-3 d-flex flex-wrap align-items-center gap-2">
                 <input type="text" placeholder="Search..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} className="search-bar" style={{ minWidth: '250px', flexGrow: 1 }} />
