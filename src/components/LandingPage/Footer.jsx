@@ -1,17 +1,23 @@
 import { React, useEffect, useState } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { FaFacebookF, FaInstagram, FaWhatsapp, FaXTwitter, FaArrowUp } from "react-icons/fa6";
+import {
+    FaFacebookF,
+    FaInstagram,
+    FaWhatsapp,
+    FaXTwitter,
+    FaArrowUp,
+} from "react-icons/fa6";
 import { Link } from "react-scroll"; // for smooth scrolling
+import { NavLink } from "react-router-dom"; // for routing to pages
 import PropTypes from "prop-types";
 import "./LandingPage.css";
-import logo from "../../assets/brand-logo.png"; 
-
+import logo from "../../assets/brand-logo.png";
 
 const Footer = () => {
     const [showScroll, setShowScroll] = useState(false);
 
     const handleScroll = () => {
-        setShowScroll(window.scrollY > 200); // Show after 200px scroll
+        setShowScroll(window.scrollY > 200);
     };
 
     useEffect(() => {
@@ -27,6 +33,7 @@ const Footer = () => {
                 <Row className="gy-4">
                     <ContactInfo />
                     <QuickLinks />
+                    <Policies />
                     <SocialLinks />
                 </Row>
                 <Copyright />
@@ -43,25 +50,30 @@ const Footer = () => {
                     <FaArrowUp />
                 </button>
             )}
-
         </footer>
     );
 };
 
 const ContactInfo = () => (
-    <Col md={4}>
+    <Col md={5}>
         <div className="d-flex align-items-center mb-3">
-            <img src={logo} alt="MediConnect Logo" className="footer-logo me-2" />
-            <h5 className="fw-bold mb-0">MediConnect Hospital</h5>
+            <img
+                src={logo}
+                alt="MediConnect Logo"
+                className="footer-logo me-2"
+            />
+            <h4 className="fw-bold mb-0">MediConnect Hospital</h4>
         </div>
-        <p className="footer-contact">📍 Road No. 1, KPHB, Hyderabad, Telangana 500072</p>
-        <p className="footer-contact">✉️ info@mediconnect.com</p>
+        <p className="footer-contact">
+            📍 Road No. 1, KPHB, Hyderabad, Telangana 500072
+        </p>
+        <p className="footer-contact">✉️ info247mediconnect@gmail.com</p>
         <p className="footer-contact">📞 +91 83747 45738</p>
     </Col>
 );
 
 const QuickLinks = () => (
-    <Col md={4}>
+    <Col md={2}>
         <h5 className="fw-bold mb-3">Quick Links</h5>
         <ul className="footer-links list-unstyled">
             {["home", "services", "doctors", "about", "contact"].map((link) => (
@@ -82,15 +94,64 @@ const QuickLinks = () => (
     </Col>
 );
 
+const Policies = () => (
+    <Col md={2}>
+        <h5 className="fw-bold mb-3">Policies</h5>
+        <ul className="footer-links list-unstyled">
+            <li className="mb-2">
+                <NavLink to="/privacy-policy" className="footer-link">
+                    Privacy Policy
+                </NavLink>
+            </li>
+            <li className="mb-2">
+                <NavLink to="/terms" className="footer-link">
+                    Terms of Service
+                </NavLink>
+            </li>
+            <li className="mb-2">
+                <NavLink to="/cookie-policy" className="footer-link">
+                    Cookie Policy
+                </NavLink>
+            </li>
+            <li className="mb-2">
+                <NavLink to="/refund-policy" className="footer-link">
+                    Refund Policy
+                </NavLink>
+            </li>
+            <li className="mb-2">
+                <NavLink to="/disclaimer" className="footer-link">
+                    Disclaimer
+                </NavLink>
+            </li>
+        </ul>
+    </Col>
+);
+
 const SocialLinks = () => (
-    <Col md={4}>
+    <Col md={2}>
         <h5 className="fw-bold mb-3">Follow Us</h5>
         <div className="social-icons mt-3 d-flex flex-wrap gap-3">
             {[
-                { Icon: FaFacebookF, url: "https://facebook.com/", platform: "Facebook" },
-                { Icon: FaInstagram, url: "https://instagram.com/", platform: "Instagram" },
-                { Icon: FaWhatsapp, url: "https://whatsapp.com/", platform: "WhatsApp" },
-                { Icon: FaXTwitter, url: "https://twitter.com/", platform: "Twitter" },
+                {
+                    Icon: FaFacebookF,
+                    url: "https://facebook.com/",
+                    platform: "Facebook",
+                },
+                {
+                    Icon: FaInstagram,
+                    url: "https://instagram.com/",
+                    platform: "Instagram",
+                },
+                {
+                    Icon: FaWhatsapp,
+                    url: "https://whatsapp.com/",
+                    platform: "WhatsApp",
+                },
+                {
+                    Icon: FaXTwitter,
+                    url: "https://twitter.com/",
+                    platform: "Twitter",
+                },
             ].map((social, idx) => (
                 <SocialIcon key={idx} {...social} />
             ))}

@@ -1,0 +1,32 @@
+.policy-container {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.policy-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #0d6efd;
+}
+
+.policy-container h4 {
+    margin-top: 20px;
+    color: #333;
+    font-weight: 500;
+}
+
+.policy-container ul {
+    margin: 10px 0 20px 20px;
+    line-height: 1.6;
+}
+
+.policy-footer {
+    margin-top: 30px;
+    font-size: 15px;
+    color: #555;
+}

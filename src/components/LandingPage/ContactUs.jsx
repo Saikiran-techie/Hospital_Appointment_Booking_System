@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import PropTypes from "prop-types";
 import "../LandingPage/LandingPage.css";
+
+// ✅ Import Firestore instance from your firebase.js
+import { db } from "../../firebase/firebaseConfig";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const ContactUs = () => {
     const [formData, setFormData] = useState({
@@ -12,23 +17,35 @@ const ContactUs = () => {
         message: "",
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!Object.values(formData).every(Boolean)) {
-            Swal.fire("Please fill in all fields!", "", "warning");
+            toast.warn("Please fill in all fields!");
             return;
         }
-        Swal.fire({
-            title: "Message Sent!",
-            text: "We’ll get back to you soon.",
-            icon: "success",
-            confirmButtonColor: "#0d6efd",
-        });
-        setFormData({ name: "", email: "", message: "" });
+
+        try {
+            // ✅ Store message in Firestore
+            await addDoc(collection(db, "contactMessages"), {
+                name: formData.name,
+                email: formData.email,
+                message: formData.message,
+                createdAt: serverTimestamp(),
+            });
+
+            toast.success("Message sent successfully!");
+            setFormData({ name: "", email: "", message: "" }); // Reset form
+
+        } catch (error) {
+            console.error("Error submitting message:", error);
+            toast.error("Failed to send message. Please try again later.");
+        }
     };
 
     return (
         <div className="contact-section py-5">
+            <ToastContainer position="top-right" autoClose={3000} />
             <Container>
                 <h2 className="text-center fw-bold mb-4 text-primary animate-pop">
                     Get in Touch
@@ -54,7 +71,7 @@ const ContactInfo = () => (
             text="Road No. 1, KPHB, Hyderabad, Telangana 500072"
         />
         <InfoItem Icon={FaPhoneAlt} text="+91 83747 45738" />
-        <InfoItem Icon={FaEnvelope} text="info@mediconnect.com" />
+        <InfoItem Icon={FaEnvelope} text="info247mediconnect@gmail.com" />
     </Col>
 );
 
@@ -65,7 +82,6 @@ const InfoItem = ({ Icon, text }) => (
     </p>
 );
 
-
 const FormField = ({ label, type, name, value, setter, placeholder }) => (
     <Form.Group className="mb-3">
         <Form.Label>{label}</Form.Label>
@@ -74,7 +90,9 @@ const FormField = ({ label, type, name, value, setter, placeholder }) => (
             placeholder={placeholder}
             name={name}
             value={value}
-            onChange={(e) => setter(prev => ({ ...prev, [name]: e.target.value }))}
+            onChange={(e) =>
+                setter((prev) => ({ ...prev, [name]: e.target.value }))
+            }
             required
         />
     </Form.Group>
@@ -116,7 +134,12 @@ const FormColumn = ({ formData, handleSubmit, setFormData }) => (
                     placeholder="Type your message"
                     name="message"
                     value={formData.message}
-                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                    onChange={(e) =>
+                        setFormData((prev) => ({
+                            ...prev,
+                            message: e.target.value,
+                        }))
+                    }
                     required
                 />
             </Form.Group>
@@ -127,7 +150,6 @@ const FormColumn = ({ formData, handleSubmit, setFormData }) => (
     </Col>
 );
 
-// Add PropTypes for all components
 ContactUs.propTypes = {
     formData: PropTypes.object,
     handleSubmit: PropTypes.func,

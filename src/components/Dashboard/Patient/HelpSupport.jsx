@@ -22,21 +22,21 @@ const HelpSupport = () => {
                     icon: <FaPhoneAlt className="me-2 text-success" />,
                     content: <>
                         <p>For urgent queries, you can reach out to us by phone:</p>
-                        <p><strong>Phone:</strong> +91 98765 43210</p>
+                        <p><strong>Phone:</strong> +91 83747 45738</p>
                     </>
                 }, {
                     title: "Email Support",
                     icon: <FaEnvelope className="me-2 text-primary" />,
                     content: <>
                         <p>For detailed issues, drop us an email and we’ll respond within 24 hours.</p>
-                        <p><strong>Email:</strong> support@mediconnect.com</p>
+                        <p><strong>Email:</strong> info@mediconnect.com</p>
                     </>
                 }, {
                     title: "WhatsApp Support",
                     icon: <FaWhatsapp className="me-2 text-success" />,
                     content: <>
                         <p>Get instant assistance from our chatbot or support team.</p>
-                        <Button variant="success" href="https://wa.me/919876543210" target="_blank">
+                        <Button variant="success" href="https://wa.me/918374745738" target="_blank">
                             Chat on WhatsApp
                         </Button>
                     </>

@@ -8,6 +8,10 @@ import { AuthProvider } from './context/AuthContext';
 import LandingPage from "./components/LandingPage/LandingPage";
 import AboutDoctors from "./components/LandingPage/AboutDoctors";
 import TermsPage from './components/LandingPage/TermsPage';
+import PrivacyPolicy from './components/LandingPage/PrivacyPolicy';
+import RefundPolicy from './components/LandingPage/RefundPolicy';
+import Disclaimer from './components/LandingPage/Disclaimer';
+import CookiePolicy from './components/LandingPage/CookiePolicy';
 import Login from './components/Authentication/Login';
 import Signup from './components/Authentication/Signup';
 import ResetPassword from './components/Authentication/ResetPassword';
@@ -52,6 +56,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/disclaimer" element={<Disclaimer />} />
+        <Route path="/cookie-policy" element={<CookiePolicy />} />
 
         {/* Patient Routes */}
         <Route path="/patient" element={<PatientDashboardLayout />}>

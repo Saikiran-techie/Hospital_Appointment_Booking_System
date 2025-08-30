@@ -472,6 +472,7 @@
     transform: scale(1.2);
 }
 
+
 /* Contact text */
 .footer-contact {
     font-size: 1rem;
@@ -486,7 +487,7 @@
 
 /* Logo */
 .footer-logo {
-    width: 40px;
+    width: 50px;
     height: auto;
     object-fit: contain;
 }
