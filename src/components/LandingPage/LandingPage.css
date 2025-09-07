@@ -46,6 +46,16 @@
   animation: fadeInUp 1s ease-in;
 }
 
+/* Hover effects for buttons */
+.action-btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Animation Keyframes */
 @keyframes slideInLeft {
     0% {

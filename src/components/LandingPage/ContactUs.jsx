@@ -44,7 +44,7 @@ const ContactUs = () => {
     };
 
     return (
-        <div className="contact-section py-5">
+        <div className="contact-section py-5" id="contact-section">
             <ToastContainer position="top-right" autoClose={3000} />
             <Container>
                 <h2 className="text-center fw-bold mb-4 text-primary animate-pop">
