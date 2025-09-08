@@ -143,6 +143,10 @@
     opacity: 0.95;
 }
 
+button svg {
+    vertical-align: middle;
+}
+
 /* Smooth Transitions for Links & Buttons */
 .custom-navbar .nav-link,
 .custom-mobile-offcanvas .nav-link,

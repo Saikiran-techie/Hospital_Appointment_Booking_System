@@ -1,4 +1,3 @@
-// ✅ Updated Login.jsx with toast notifications and automatic role-based redirect
 import React, { useState } from 'react';
 import { Form, Button, Card, Container, Row, Col, Spinner } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -8,6 +7,7 @@ import { auth } from '../../firebase/firebaseConfig';
 import { setAuthPersistence, loginWithEmailPassword, signInWithGoogle } from '../../services/authService';
 import { getUserData } from '../../services/firestoreService';
 import './Auth.css';
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
@@ -89,79 +89,96 @@ const Login = () => {
       <Container>
         <Row className="justify-content-center">
           <Col md={7} lg={6}>
-            <Card className="auth-card p-4">
-              <Card.Body>
-                <h2 className="auth-title">Welcome Back 👋</h2>
+            {/* Animated Title with top spacing */}
+            <motion.h2
+              className="auth-title text-center mb-4"
+              style={{ marginTop: '2rem' }}
+              initial={{ opacity: 0, y: -30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              Welcome Back 👋
+            </motion.h2>
 
-                <Form onSubmit={handleSubmit}>
-                  <Form.Group controlId="email" className="mb-3">
-                    <Form.Control
-                      type="email"
-                      name="email"
-                      placeholder="Email Address"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </Form.Group>
+            {/* Animated Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Card className="auth-card p-4 shadow">
+                <Card.Body>
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="email" className="mb-3">
+                      <Form.Control
+                        type="email"
+                        name="email"
+                        placeholder="Email Address"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Form.Group>
 
-                  <Form.Group controlId="password" className="mb-3 position-relative">
-                    <Form.Control
-                      type={showPassword ? 'text' : 'password'}
-                      name="password"
-                      placeholder="Password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                    />
-                    <div
-                      className="password-toggle"
-                      onClick={togglePassword}
-                      role="button"
-                      tabIndex={0}
-                      onKeyPress={(e) => e.key === 'Enter' && togglePassword()}
-                    >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    <Form.Group controlId="password" className="mb-3 position-relative">
+                      <Form.Control
+                        type={showPassword ? 'text' : 'password'}
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                      />
+                      <div
+                        className="password-toggle"
+                        onClick={togglePassword}
+                        role="button"
+                        tabIndex={0}
+                        onKeyPress={(e) => e.key === 'Enter' && togglePassword()}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </div>
+                    </Form.Group>
+
+                    <div className="form-switch mb-4 d-flex justify-content-between align-items-center">
+                      <Form.Check
+                        type="checkbox"
+                        label="Remember Me"
+                        name="rememberMe"
+                        checked={formData.rememberMe}
+                        onChange={handleChange}
+                      />
+                      <a href="/reset-password" className="auth-link">Forgot Password?</a>
                     </div>
-                  </Form.Group>
 
-                  <div className="form-switch mb-4 d-flex justify-content-between align-items-center">
-                    <Form.Check
-                      type="checkbox"
-                      label="Remember Me"
-                      name="rememberMe"
-                      checked={formData.rememberMe}
-                      onChange={handleChange}
+                    <Button type="submit" className="auth-button w-100 mb-2">
+                      Login
+                    </Button>
+                  </Form>
+
+                  <div className="text-center my-2 text-muted">or</div>
+
+                  <Button
+                    variant="outline-secondary"
+                    onClick={handleGoogleLogin}
+                    className="google-auth-btn w-100"
+                  >
+                    <img
+                      src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
+                      alt="Google"
+                      className="me-2"
+                      style={{ width: '20px', height: '20px' }}
                     />
-                    <a href="/reset-password" className="auth-link">Forgot Password?</a>
-                  </div>
-
-                  <Button type="submit" className="auth-button w-100 mb-2">
-                    Login
+                    Sign in with Google
                   </Button>
-                </Form>
 
-                <div className="text-center my-2 text-muted">or</div>
-
-                <Button
-                  variant="outline-secondary"
-                  onClick={handleGoogleLogin}
-                  className="google-auth-btn w-100"
-                >
-                  <img
-                    src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
-                    alt="Google"
-                    className="me-2"
-                  />
-                  Sign in with Google
-                </Button>
-
-                <p className="text-center mt-4">
-                  Don't have an account?{' '}
-                  <a href="/signup" className="auth-link">Sign Up</a>
-                </p>
-              </Card.Body>
-            </Card>
+                  <p className="text-center mt-4">
+                    Don't have an account?{' '}
+                    <a href="/signup" className="auth-link">Sign Up</a>
+                  </p>
+                </Card.Body>
+              </Card>
+            </motion.div>
           </Col>
         </Row>
       </Container>

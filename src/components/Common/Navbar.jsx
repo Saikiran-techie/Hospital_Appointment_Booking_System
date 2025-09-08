@@ -7,7 +7,7 @@ import {
 } from "react-bootstrap";
 import { Link as RouterLink } from "react-router-dom";
 import { Link as ScrollLink } from "react-scroll";
-import { FaTimes, FaBars } from "react-icons/fa";
+import { FaTimes, FaBars, FaUserPlus, FaSignInAlt } from "react-icons/fa";
 import logoImg from "../../assets/brand-logo.png";
 import "../../styles/custom.css";
 
@@ -20,7 +20,6 @@ const NavigationBar = () => {
 
     return (
         <>
-
             {/* Custom Offcanvas dropdown under navbar */}
             <div className={`custom-mobile-offcanvas ${showOffcanvas ? 'show' : ''}`}>
                 <Nav className="flex-column text-center">
@@ -43,19 +42,23 @@ const NavigationBar = () => {
                 </Nav>
 
                 <div className="mt-4 d-flex flex-column gap-3 px-4 text-center">
-                    <RouterLink to="/signup" onClick={handleClose}>
-                        <Button variant="outline-light" className="rounded-pill w-50">Sign Up</Button>
+                    <RouterLink to="/signup" onClick={handleClose} style={{ textDecoration: "none" }}>
+                        <Button variant="outline-light" className="rounded-pill w-50 mx-auto d-flex align-items-center justify-content-center gap-2">
+                            <FaUserPlus /> Sign Up
+                        </Button>
                     </RouterLink>
-                    <RouterLink to="/login" onClick={handleClose}>
-                        <Button variant="light" className="rounded-pill w-50">Login</Button>
+                    <RouterLink to="/login" onClick={handleClose} style={{ textDecoration: "none" }}>
+                        <Button variant="light" className="rounded-pill w-50 mx-auto d-flex align-items-center justify-content-center gap-2">
+                            <FaSignInAlt /> Login
+                        </Button>
                     </RouterLink>
                 </div>
             </div>
-            
+
             {/* Fixed Navbar */}
             <Navbar expand="lg" variant="dark" className="custom-navbar fixed-top">
                 <Container>
-                    <Navbar.Brand as={RouterLink} to="/" className="d-flex align-items-center gap-1">
+                    <Navbar.Brand as={RouterLink} to="/" className="d-flex align-items-center gap-1" style={{ textDecoration: "none" }}>
                         <img src={logoImg} alt="Hospital Logo" className="logo-img me-2" />
                         <span className="brand-name d-flex flex-column">
                             MediConnect <h4 className="mb-0 text-white">Hospital</h4>
@@ -92,11 +95,15 @@ const NavigationBar = () => {
                                 {item.charAt(0).toUpperCase() + item.slice(1)}
                             </Nav.Link>
                         ))}
-                        <RouterLink to="/signup">
-                            <Button variant="outline-light" className="ms-3 me-2 rounded-pill px-4">Sign Up</Button>
+                        <RouterLink to="/signup" style={{ textDecoration: "none" }}>
+                            <Button variant="outline-light" className="ms-3 me-2 rounded-pill px-4 d-flex align-items-center gap-2">
+                                <FaUserPlus /> Sign Up
+                            </Button>
                         </RouterLink>
-                        <RouterLink to="/login">
-                            <Button variant="light" className="rounded-pill px-4">Login</Button>
+                        <RouterLink to="/login" style={{ textDecoration: "none" }}>
+                            <Button variant="light" className="rounded-pill px-4 d-flex align-items-center gap-2">
+                                <FaSignInAlt /> Login
+                            </Button>
                         </RouterLink>
                     </Nav>
                 </Container>
@@ -104,7 +111,6 @@ const NavigationBar = () => {
 
             {/* Spacer to push content below fixed navbar */}
             <div className="navbar-spacer"></div>
-
         </>
     );
 };

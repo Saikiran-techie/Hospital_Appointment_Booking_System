@@ -37,6 +37,13 @@
     color: #000000;
 }
 
+.highlight-green {
+    color: #198754;
+    /* Bootstrap Success Green */
+    font-weight: 600;
+    /* Keep it bold */
+}
+
 .hero-img {
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);

@@ -32,7 +32,9 @@ const Home = () => {
                         </p>
                         <p className="lead">
                             🕒 Open 24/7 for emergencies.<br />
-                            🏥 Regular outpatient timings: <strong>Mon–Sat, 8:00 AM – 8:00 PM</strong>
+                            🏥 Regular outpatient timings: 
+                            <strong className="highlight-green"> Mon–Sat, 8:00 AM – 8:00 PM</strong><br />
+                            <strong className="highlight-green"> Sunday, 9:00 AM – 7:00 PM</strong>
                         </p>
                     </Col>
 

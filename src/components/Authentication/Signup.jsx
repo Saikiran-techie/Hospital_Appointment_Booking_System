@@ -8,6 +8,7 @@ import { auth } from '../../firebase/firebaseConfig';
 import { saveUserData, saveRoleSpecificData } from '../../services/firestoreService';
 import './Auth.css';
 import { useLoading } from '../../context/LoadingContext';
+import { motion } from 'framer-motion';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -117,123 +118,140 @@ const Signup = () => {
             <Container>
                 <Row className="justify-content-center">
                     <Col md={7} lg={6}>
-                        <Card className="auth-card p-4">
-                            <Card.Body>
-                                <h2 className="auth-title mb-4">Create Account</h2>
-                                <Form onSubmit={handleSubmit} noValidate>
-                                    <Form.Group className="mb-3">
-                                        <Form.Control
-                                            type="text"
-                                            name="name"
-                                            placeholder="Full Name"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
+                        {/* Animated Title with top spacing */}
+                        <motion.h3
+                            className="auth-title text-center mb-4"
+                            style={{ marginTop: '2rem' }}
+                            initial={{ opacity: 0, y: -30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            Create Your Account
+                        </motion.h3>
 
-                                    <Form.Group className="mb-3">
-                                        <Form.Control
-                                            type="email"
-                                            name="email"
-                                            placeholder="Email Address"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3 position-relative">
-                                        <Form.Control
-                                            type={showPassword ? 'text' : 'password'}
-                                            name="password"
-                                            placeholder="Password"
-                                            value={formData.password}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        <button type="button" className="password-toggle" onClick={togglePassword}>
-                                            {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                        </button>
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3 position-relative">
-                                        <Form.Control
-                                            type={showConfirm ? 'text' : 'password'}
-                                            name="confirmPassword"
-                                            placeholder="Confirm Password"
-                                            value={formData.confirmPassword}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                        <button type="button" className="password-toggle" onClick={toggleConfirm}>
-                                            {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                                        </button>
-                                    </Form.Group>
-
-                                    <Form.Group className="mb-3">
-                                        <Form.Select name="role" value={formData.role} onChange={handleChange} required>
-                                            <option value="">Select Your Role</option>
-                                            <option value="Patient">Patient</option>
-                                            <option value="Doctor">Doctor</option>
-                                        </Form.Select>
-                                    </Form.Group>
-
-                                    {formData.role === 'Doctor' && (
+                        {/* Animated Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            <Card className="auth-card p-4 shadow">
+                                <Card.Body>
+                                    <Form onSubmit={handleSubmit} noValidate>
                                         <Form.Group className="mb-3">
                                             <Form.Control
                                                 type="text"
-                                                name="specialization"
-                                                placeholder="Specialization"
-                                                value={formData.specialization}
+                                                name="name"
+                                                placeholder="Full Name"
+                                                value={formData.name}
                                                 onChange={handleChange}
                                                 required
                                             />
                                         </Form.Group>
-                                    )}
 
-                                    <Form.Group className="mb-4">
-                                        <Form.Check
-                                            type="checkbox"
-                                            name="agree"
-                                            label={
-                                                <span>
-                                                    I agree to the{' '}
-                                                    <Link to="/terms" className="auth-link">Terms & Conditions</Link>
-                                                </span>
-                                            }
-                                            checked={formData.agree}
-                                            onChange={handleChange}
-                                            required
+                                        <Form.Group className="mb-3">
+                                            <Form.Control
+                                                type="email"
+                                                name="email"
+                                                placeholder="Email Address"
+                                                value={formData.email}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3 position-relative">
+                                            <Form.Control
+                                                type={showPassword ? 'text' : 'password'}
+                                                name="password"
+                                                placeholder="Password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                            <button type="button" className="password-toggle" onClick={togglePassword}>
+                                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                            </button>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3 position-relative">
+                                            <Form.Control
+                                                type={showConfirm ? 'text' : 'password'}
+                                                name="confirmPassword"
+                                                placeholder="Confirm Password"
+                                                value={formData.confirmPassword}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                            <button type="button" className="password-toggle" onClick={toggleConfirm}>
+                                                {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                                            </button>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <Form.Select name="role" value={formData.role} onChange={handleChange} required>
+                                                <option value="">Select Your Role</option>
+                                                <option value="Patient">Patient</option>
+                                                <option value="Doctor">Doctor</option>
+                                            </Form.Select>
+                                        </Form.Group>
+
+                                        {formData.role === 'Doctor' && (
+                                            <Form.Group className="mb-3">
+                                                <Form.Control
+                                                    type="text"
+                                                    name="specialization"
+                                                    placeholder="Specialization"
+                                                    value={formData.specialization}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            </Form.Group>
+                                        )}
+
+                                        <Form.Group className="mb-4">
+                                            <Form.Check
+                                                type="checkbox"
+                                                name="agree"
+                                                label={
+                                                    <span>
+                                                        I agree to the{' '}
+                                                        <Link to="/terms" className="auth-link">Terms & Conditions</Link>
+                                                    </span>
+                                                }
+                                                checked={formData.agree}
+                                                onChange={handleChange}
+                                                required
+                                            />
+                                        </Form.Group>
+
+                                        <Button type="submit" className="auth-button w-100 mb-3">
+                                            Create Account
+                                        </Button>
+                                    </Form>
+
+                                    <div className="text-center my-3 text-muted">or</div>
+
+                                    <Button
+                                        variant="outline-secondary"
+                                        onClick={handleGoogleSignup}
+                                        className="google-auth-btn w-100 mb-4"
+                                    >
+                                        <img
+                                            src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
+                                            alt="Google icon"
+                                            className="me-2"
+                                            style={{ width: '20px', height: '20px' }}
                                         />
-                                    </Form.Group>
-
-                                    <Button type="submit" className="auth-button w-100 mb-3">
-                                        Create Account
+                                        Continue with Google
                                     </Button>
-                                </Form>
 
-                                <div className="text-center my-3 text-muted">or</div>
-
-                                <Button
-                                    variant="outline-secondary"
-                                    onClick={handleGoogleSignup}
-                                    className="google-auth-btn w-100 mb-4"
-                                >
-                                    <img
-                                        src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
-                                        alt="Google icon"
-                                        className="me-2"
-                                        style={{ width: '20px', height: '20px' }}
-                                    />
-                                    Continue with Google
-                                </Button>
-
-                                <p className="text-center auth-link-text">
-                                    Already have an account? <Link to="/login" className="auth-link">Log In</Link>
-                                </p>
-                            </Card.Body>
-                        </Card>
+                                    <p className="text-center auth-link-text">
+                                        Already have an account? <Link to="/login" className="auth-link">Log In</Link>
+                                    </p>
+                                </Card.Body>
+                            </Card>
+                        </motion.div>
                     </Col>
                 </Row>
             </Container>
